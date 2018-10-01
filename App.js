@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
-
+import Icon from 'react-native-vector-icons/FontAwesome';
+const myIcon = (<Icon name="rocket" size={30} color="#900" />)
 
 type Props = {};
 export default class App extends Component<Props> {
@@ -8,7 +9,7 @@ export default class App extends Component<Props> {
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>Welcome to React Native!</Text>
-        <Text style={styles.instructions}>To get started, edit App.js</Text>
+        <Text style={styles.instructions}>To get started, edit App.js {myIcon}</Text>
       </View>
     );
   }
