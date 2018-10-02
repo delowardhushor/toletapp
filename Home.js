@@ -10,14 +10,8 @@ export default class Home extends Component<Props> {
     constructor(props) {
         super(props);
         this.state = {
-          showSpinner:false,
-           checked:false,
-           pic: require('./images/profile.png'),
-           watchChange:true,
-           DOB:'',
+          
         };
-        this.focusNextField = this.focusNextField.bind(this);
-        this.inputs = {};
     }
 
     render() {
