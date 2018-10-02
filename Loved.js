@@ -1,12 +1,16 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
+import {Platform, StyleSheet,ScrollView, Dimensions, Text, View} from 'react-native';
+import SingleRent from './resources/SingleRent';
 
 type Props = {};
 export default class Loved extends Component<Props> {
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to Loved!</Text>
+      <View>
+        <ScrollView style={{height:Dimensions.get('window').height-100}}>
+          <SingleRent />
+          <SingleRent />
+        </ScrollView>
       </View>
     );
   }
