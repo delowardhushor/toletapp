@@ -5,11 +5,13 @@ import { createBottomTabNavigator } from 'react-navigation';
 import Home from './Home';
 import Settings from './Settings';
 import Loved from './Loved';
+import Myhouse from './Myhouse';
 import {theme} from './lib/theme';
 
 const BottomTab = createBottomTabNavigator(
   {
     Home: Home,
+    Myhouse: Myhouse,
     Loved: Loved,
     Settings: Settings,
   },
@@ -20,6 +22,8 @@ const BottomTab = createBottomTabNavigator(
         let iconName;
         if (routeName === 'Home') {
           iconName = 'home';
+        }if (routeName === 'Myhouse') {
+          iconName = 'map-signs';
         } else if (routeName === 'Settings') {
           iconName = 'cog';
         }else if (routeName === 'Loved') {
