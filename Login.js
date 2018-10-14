@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet,WebView,ImageBackground,TouchableOpacity,ToastAndroid, ScrollView, Dimensions, Text,TextInput, View} from 'react-native';
+import {Platform, StyleSheet,WebView,ImageBackground,TouchableOpacity,Button, ToastAndroid, ScrollView, Dimensions, Text,TextInput, View} from 'react-native';
 import SingleRent from './resources/SingleRent';
 import { theme } from './lib/theme';
 
@@ -10,7 +10,7 @@ export default class Login extends Component<Props> {
     constructor(props) {
         super(props);
         this.state = {
-            mode : 'Up'
+            mode : 'In'
         };
     }
 
@@ -44,7 +44,7 @@ export default class Login extends Component<Props> {
     return (
         <View style={styles.back}>
           <View>
-            <Text style={styles.text}>Please Sign Up for This Feature</Text>
+            <Text style={styles.text}>Please Sign In for This Feature</Text>
           </View>
           
           <View style={styles.container}>
@@ -73,6 +73,11 @@ export default class Login extends Component<Props> {
           <TouchableOpacity onPress={() => this.checkMode()} style={styles.fillButton}>
             <Text style={[styles.text, {color:'#fff'}]}>Sign {this.state.mode}</Text>
           </TouchableOpacity>
+          {(this.state.mode === 'In') &&
+          <TouchableOpacity onPress={() => this.props.changePage('ForgetPass')} >
+            <Text style={[styles.text, {color:'#fff'}]}>Forget Password?</Text>
+          </TouchableOpacity>
+          }
           <TouchableOpacity onPress={() => this.changeMode()} style={styles.strokButton}>
             <Text style={styles.text}>{this.state.mode === 'In' ? "Don't" : ''} Have a Account?</Text>
           </TouchableOpacity>

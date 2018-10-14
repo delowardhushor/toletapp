@@ -3,19 +3,42 @@ import {Platform, StyleSheet,WebView,ImageBackground, ScrollView, Dimensions, Te
 import SingleRent from './resources/SingleRent';
 import { theme } from './lib/theme';
 import Login from './Login';
+import ForgetPass from './ForgetPass';
+import ConfirmCode from './ConfirmCode';
 
 
 type Props = {};
 export default class Myhouse extends Component<Props> {
 
-    _onNavigationStateChange(webViewState){
-        console.log(webViewState.url)
-    }
+  constructor(props) {
+      super(props);
+      this.state = {
+          page : 'Login'
+      };
+  }
+
+    // _onNavigationStateChange(webViewState){
+    //     console.log(webViewState.url)
+    // }
+
+  changePage = (value) =>{
+    console.log("sdsdsd");
+    this.setState({page:value});
+  }
+  
 
   render() {
     return (
         <View>
-          <Login />
+          {(this.state.page === 'Login') && 
+            <Login changePage={this.changePage} />
+          }
+          {(this.state.page === 'ForgetPass') && 
+            <ForgetPass changePage={this.changePage} />
+          }
+          {(this.state.page === 'ConfirmCode') && 
+            <ConfirmCode changePage={this.changePage} />
+          }
         </View>
     );
   }
