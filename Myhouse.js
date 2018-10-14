@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet,WebView,ImageBackground, ScrollView, Dimensions, Text,TextInput, View} from 'react-native';
 import SingleRent from './resources/SingleRent';
 import { theme } from './lib/theme';
+import Login from './Login';
 
 
 type Props = {};
@@ -13,11 +14,9 @@ export default class Myhouse extends Component<Props> {
 
   render() {
     return (
-        <ImageBackground                 
-        source={{uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbiehprBLHivW2jED_5YWXK5V-DMy_B0NooIzU_1kugIe_ByyT'}}
-        style={styles.container}>
-          <TextInput style={styles.input} placeholder="Phone Number" />
-        </ImageBackground>
+        <View>
+          <Login />
+        </View>
     );
   }
 }

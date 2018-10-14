@@ -10,8 +10,8 @@ import {theme} from './lib/theme';
 
 const BottomTab = createBottomTabNavigator(
   {
-    Home: Home,
     Myhouse: Myhouse,
+    Home: Home, 
     Loved: Loved,
     Settings: Settings,
   },
@@ -42,7 +42,6 @@ const BottomTab = createBottomTabNavigator(
 type Props = {};
 export default class App extends Component<Props> {
   render() {
-    console.log("theme");
     return (
       <BottomTab />
     );
