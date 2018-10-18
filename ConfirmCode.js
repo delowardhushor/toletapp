@@ -24,7 +24,6 @@ export default class ConfirmCode extends Component<Props> {
           <View>
             <Text style={styles.text}>Please Confirm Code Sent To Your Phone</Text>
           </View>
-          
           <View style={styles.container}>
             <TextInput 
                 style={styles.input} 

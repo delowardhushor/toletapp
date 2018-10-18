@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet,WebView,ImageBackground, ScrollView, Dimensions, Text,TextInput, View} from 'react-native';
 import SingleRent from './resources/SingleRent';
+import axios from 'axios';
 import { theme } from './lib/theme';
 import Login from './Login';
 import ForgetPass from './ForgetPass';
@@ -15,6 +16,10 @@ export default class Myhouse extends Component<Props> {
       this.state = {
           page : 'Login'
       };
+  }
+
+  componentWillMount(){
+    
   }
 
     // _onNavigationStateChange(webViewState){

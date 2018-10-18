@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet,WebView,ImageBackground,TouchableOpacity,Button, ToastAndroid, ScrollView, Dimensions, Text,TextInput, View} from 'react-native';
 import SingleRent from './resources/SingleRent';
 import { theme } from './lib/theme';
+import {post } from './lib/utilies';
 
 
 type Props = {};
@@ -33,7 +34,17 @@ export default class Login extends Component<Props> {
     }
 
     signUp(){
-
+        post('/signup', {
+            name:this.state.name, 
+            mobile:this.state.mobile, 
+            password:this.state.password
+        }, (response) => {
+            if(response.data.success === true){
+                ToastAndroid.show("Welcome To Tolet", 1000);
+            }else{
+                ToastAndroid.show(response.data.msg, 1000);
+            }
+        });
     }
 
     login(){
