@@ -26,12 +26,16 @@ export default class Home extends Component<Props> {
                 'threebed':true,
                 'threeupbed':true,
             },
+            houses:[],
         };
     }
 
     componentWillMount(){
-        get('/adds', (res) =>{
-            console.log(res);
+        get('/adds', (response) =>{
+            console.log(response);
+            if(response.data !== null){
+                this.setState({houses:response.data});
+            }
         })
     }
 
@@ -39,11 +43,10 @@ export default class Home extends Component<Props> {
         return (
             <View>
                 <Search />
-                <ScrollView style={{height:Dimensions.get('window').height-100}}>
-                    <SingleRent />
-                    <SingleRent />
-                    <SingleRent />
-                </ScrollView>
+                <FlatList style={{height:Dimensions.get('window').height-100}}
+                    data={this.state.houses.data}
+                    renderItem={({item}) => <SingleRent houseData = {item} />}
+                />
             </View>
         );
     }

@@ -1,11 +1,14 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet,WebView,ImageBackground, ScrollView, Dimensions, Text,TextInput, View} from 'react-native';
+import {Platform, StyleSheet,WebView,TouchableOpacity,Modal, ImageBackground,AsyncStorage, ScrollView, Dimensions, Text,TextInput, View} from 'react-native';
 import SingleRent from './resources/SingleRent';
-import axios from 'axios';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { theme } from './lib/theme';
 import Login from './Login';
 import ForgetPass from './ForgetPass';
 import ConfirmCode from './ConfirmCode';
+import { getLocal } from './lib/utilies';
+import AddHouse from './AddHouse';
+
 
 
 type Props = {};
@@ -14,25 +17,37 @@ export default class Myhouse extends Component<Props> {
   constructor(props) {
       super(props);
       this.state = {
-          page : 'Login'
+          page : 'myHouse',
+          addModal : true,
+          houseData: {
+            images:[]
+          },
       };
   }
 
-  componentWillMount(){
-    
+  async componentWillMount(){
+    var loggedUser = await getLocal('user');
+    if(loggedUser.length !== null){
+      this.setState({page:'myHouse'});
+    }
   }
 
-    // _onNavigationStateChange(webViewState){
-    //     console.log(webViewState.url)
-    // }
-
   changePage = (value) =>{
-    console.log("sdsdsd");
     this.setState({page:value});
   }
   
 
   render() {
+    const images = this.state.houseData.images.map((image) => {
+      return (
+        <TouchableOpacity>
+          <Image
+              style={styles.singleImage}
+              source={image}
+          />
+        </TouchableOpacity>
+      );
+    })
     return (
         <View>
           {(this.state.page === 'Login') && 
@@ -43,6 +58,17 @@ export default class Myhouse extends Component<Props> {
           }
           {(this.state.page === 'ConfirmCode') && 
             <ConfirmCode changePage={this.changePage} />
+          }
+          {(this.state.page === 'myHouse') && 
+            <View>
+              <TouchableOpacity onPress={() => this.changePage('AddHouse')} style={styles.addBtnWrapper}>
+                <Text><Icon name='plus' size={12} color='#fff' /></Text>
+              </TouchableOpacity>
+              <View style={styles.houseHeader}><Text style={styles.headerText}>Your Houses</Text></View>
+            </View>
+          }
+          {(this.state.page === 'AddHouse') &&
+            <AddHouse changePage={this.changePage} />
           }
         </View>
     );
@@ -57,14 +83,41 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
-  input:{
+  addBtnWrapper:{
     height:30,
-    padding:0,
-    fontSize:14,
-    paddingHorizontal:15,
-    borderWidth:1,
-    borderRadius:20,
-    borderColor:theme().backClr,
-    width:'90%'
+    width:30,
+    backgroundColor:theme().backClr,
+    borderRadius:15,
+    alignItems:'center',
+    justifyContent:'center',
+    position:'absolute',
+    top:10,
+    right:10,
   },
+  houseHeader:{
+    height: 50,
+    alignItems:'center',
+    justifyContent:'center'
+  },
+  headerText:{
+    color:theme().clr,
+    fontSize:14
+  },
+  singleImage:{
+    height:100, 
+    width:150, 
+    alignItems:'center', 
+    justifyContent:'center'
+  },
+  addImageBtn:{
+    paddingHorizontal:20,
+    paddingVertical:10,
+    borderRadius:20,
+    backgroundColor:theme().backClr,
+    color:'#fff',
+    fontSize:12
+  },
+  fullWidth:{
+    width:'100%',
+  }
 });

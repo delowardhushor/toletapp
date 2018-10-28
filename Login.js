@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet,WebView,ImageBackground,TouchableOpacity,Button, ToastAndroid, ScrollView, Dimensions, Text,TextInput, View} from 'react-native';
 import SingleRent from './resources/SingleRent';
 import { theme } from './lib/theme';
-import {post } from './lib/utilies';
+import {post, setLocal, getLocal } from './lib/utilies';
 
 
 type Props = {};
@@ -39,8 +39,11 @@ export default class Login extends Component<Props> {
             mobile:this.state.mobile, 
             password:this.state.password
         }, (response) => {
-            if(response.data.success === true){
-                ToastAndroid.show("Welcome To Tolet", 1000);
+            console.log(response);
+            if(response.data !== null){
+                ToastAndroid.show('Welcome', 1000);
+                setLocal('user', response.data);
+                this.props.changePage('myHouse');
             }else{
                 ToastAndroid.show(response.data.msg, 1000);
             }
@@ -48,7 +51,19 @@ export default class Login extends Component<Props> {
     }
 
     login(){
-
+        post('/signin', {
+            mobile:this.state.mobile, 
+            password:this.state.password
+        }, (response) => {
+            console.log(response);
+            if(response.data !== null){
+                ToastAndroid.show('Welcome', 1000);
+                setLocal('user', response.data);
+                this.props.changePage('myHouse');
+            }else{
+                ToastAndroid.show(response.data.msg, 1000);
+            }
+        });
     }
 
   render() {

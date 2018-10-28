@@ -13,17 +13,17 @@ export default class SingleRent extends Component<Props> {
                 source={{uri: 'https://www.mcdonaldjoneshomes.com.au/sites/default/files/designs/feature_images/granny-flat-9-living-kitchen-alfresco-r.jpg'}}
             />
             <View style={styles.rentType}>
-                <Text style={styles.rentTypeText}>FOR SALE</Text>
+                <Text style={styles.rentTypeText}>FOR {this.props.houseData.type}</Text>
             </View>
             <View style={styles.detailSection}>
-                <Text style={styles.rent}>$12.00/m</Text>
-                <Text style={styles.detailText}>2 <Icon name='bed' size={12} /></Text>
-                <Text style={styles.detailText}>1 <Icon name='bath' size={12} /></Text>
-                <Text style={styles.rent}>1200 sq ft</Text>
+                <Text style={styles.rent}>${this.props.houseData.cost}/m</Text>
+                <Text style={styles.detailText}>{this.props.houseData.room} <Icon name='bed' size={12} /></Text>
+                <Text style={styles.detailText}>{this.props.houseData.bath} <Icon name='bath' size={12} /></Text>
+                <Text style={styles.rent}>{this.props.houseData.square} sq ft</Text>
             </View>
             <View style={[styles.container, {flexDirection:'row', justifyContent:'space-between'}]}>
                 <View style={{flex:.7, justifyContent:'center'}}>
-                    <Text style={styles.address}>Mohammadpur Dhakas dlkjasd</Text>
+                    <Text style={styles.address}>{this.props.houseData.address}</Text>
                 </View>
                 <View style={{flex:.3, justifyContent:'center'}}>
                 <TouchableOpacity style={styles.viewBtn} >
@@ -57,6 +57,7 @@ const styles = StyleSheet.create({
     rentTypeText:{
         color:'#fff',
         fontSize:11,
+        textTransform:'capitalize'
     },
     detailSection:{
         flexDirection:'row', 

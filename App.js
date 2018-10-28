@@ -10,8 +10,9 @@ import {theme} from './lib/theme';
 
 const BottomTab = createBottomTabNavigator(
   {
-    Home: Home,
     Myhouse: Myhouse, 
+    Home: Home,
+    
     Loved: Loved,
     Settings: Settings,
   },
