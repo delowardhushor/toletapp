@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet,WebView,TouchableOpacity,Modal, ImageBackground,AsyncStorage, ScrollView, Dimensions, Text,TextInput, View} from 'react-native';
+import {Platform, StyleSheet,WebView,TouchableOpacity,Modal,KeyboardAvoidingView, ImageBackground,AsyncStorage, ScrollView, Dimensions, Text,TextInput, View} from 'react-native';
 import SingleRent from './resources/SingleRent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { theme } from './lib/theme';
@@ -17,7 +17,7 @@ export default class Myhouse extends Component<Props> {
   constructor(props) {
       super(props);
       this.state = {
-          page : 'myHouse',
+          page : 'AddHouse',
           addModal : true,
           houseData: {
             images:[]
@@ -49,7 +49,7 @@ export default class Myhouse extends Component<Props> {
       );
     })
     return (
-        <View>
+        <KeyboardAvoidingView behavior="padding" enabled>
           {(this.state.page === 'Login') && 
             <Login changePage={this.changePage} />
           }
@@ -70,7 +70,7 @@ export default class Myhouse extends Component<Props> {
           {(this.state.page === 'AddHouse') &&
             <AddHouse changePage={this.changePage} />
           }
-        </View>
+        </KeyboardAvoidingView>
     );
   }
 }

@@ -138,8 +138,8 @@ export default class Search extends Component<Props> {
                     keyboardShouldPersistTaps={'always'}
                     extraData={this.state.watchChange}
                     data={this.state.filteredArea}
-                    renderItem={({item}) =>
-                        <TouchableOpacity onPress={() => this.selectArea(item)} style={styles.areaList}>
+                    renderItem={({item, i}) =>
+                        <TouchableOpacity key={i} onPress={() => this.selectArea(item)} style={styles.areaList}>
                             <Text style={styles.areaName}>{item}</Text>
                             <Text><Icon name='check-circle' color={theme().backClr} /></Text>
                         </TouchableOpacity>
