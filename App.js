@@ -43,6 +43,7 @@ const BottomTab = createBottomTabNavigator(
 type Props = {};
 export default class App extends Component<Props> {
   render() {
+    console.log(this)
     return (
       <BottomTab />
     );

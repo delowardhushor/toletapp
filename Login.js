@@ -13,13 +13,23 @@ export default class Login extends Component<Props> {
         this.state = {
             mode : 'In'
         };
+        this.focusNextField = this.focusNextField.bind(this);
+        this.inputs = {};
+    }
+
+    focusNextField(id) {
+        setTimeout(() => {
+          this.inputs[id].focus();
+        }, 100);
     }
 
     changeMode(){
         if(this.state.mode === 'Up'){
             this.setState({mode:'In'});
+            this.focusNextField('mobile');
         }else{
             this.setState({mode:'Up'});
+            this.focusNextField('name');
         }
     }
 
@@ -81,6 +91,17 @@ export default class Login extends Component<Props> {
                 placeholderTextColor = '#ddd'
                 placeholder='Your Name'
                 onChangeText={(name) => this.setState({name})} 
+                ref={ input => {
+                    this.inputs['name'] = input;
+                }}
+                onSubmitEditing={() => {
+                    this.focusNextField('mobile');
+                }}
+                returnKeyType='next'
+                selectTextOnFocus={true}
+                autoCapitalize="none"
+                blurOnSubmit={false}
+                autoFocus={this.state.mode === 'Up' ? true:false}
             />
             }
             <TextInput 
@@ -88,12 +109,34 @@ export default class Login extends Component<Props> {
                 placeholderTextColor = '#ddd'
                 placeholder='Mobile' 
                 onChangeText={(mobile) => this.setState({mobile})} 
+                ref={ input => {
+                    this.inputs['mobile'] = input;
+                }}
+                onSubmitEditing={() => {
+                    this.focusNextField('password');
+                }}
+                returnKeyType='next'
+                selectTextOnFocus={true}
+                autoCapitalize="none"
+                blurOnSubmit={false}
+                autoFocus={this.state.mode === 'In' ? true:false}
             />
             <TextInput 
                 style={styles.input} 
                 placeholderTextColor = '#ddd'
                 placeholder='Password' 
                 onChangeText={(password) => this.setState({password})} 
+                ref={ input => {
+                    this.inputs['password'] = input;
+                }}
+                onSubmitEditing={() => {
+                    this.checkMode();
+                }}
+                returnKeyType='done'
+                selectTextOnFocus={true}
+                autoCapitalize="none"
+                blurOnSubmit={true}
+                secureTextEntry={true}
             />
           </View>
           <TouchableOpacity onPress={() => this.checkMode()} style={styles.fillButton}>

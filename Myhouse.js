@@ -17,8 +17,7 @@ export default class Myhouse extends Component<Props> {
   constructor(props) {
       super(props);
       this.state = {
-          page : 'AddHouse',
-          addModal : true,
+          page : 'Login',
           houseData: {
             images:[]
           },
@@ -28,6 +27,7 @@ export default class Myhouse extends Component<Props> {
   async componentWillMount(){
     var loggedUser = await getLocal('user');
     if(loggedUser.length !== null){
+      console.log(loggedUser);
       this.setState({page:'myHouse'});
     }
   }
@@ -49,7 +49,7 @@ export default class Myhouse extends Component<Props> {
       );
     })
     return (
-        <KeyboardAvoidingView behavior="padding" enabled>
+        <KeyboardAvoidingView enabled>
           {(this.state.page === 'Login') && 
             <Login changePage={this.changePage} />
           }
