@@ -108,8 +108,8 @@ export default class App extends Component<Props> {
               onPress={this._onPressButton}
               background={TouchableNativeFeedback.SelectableBackground()}>
             <View style={styles.btnETxWrapper}>
-              <Icon name="home" size={22} color={'#000'} />
-              <Text style={[styles.btnText, {color:'#000'}]}>Home</Text>
+              <Icon name="home" size={22} color={this.state.activeScreen == "Home" ? '#4ebd65' : '#000'} />
+              <Text style={[styles.btnText, {color:this.state.activeScreen == "Home" ? '#4ebd65' : '#000'}]}>Home</Text>
             </View>
           </TouchableNativeFeedback>
           <TouchableNativeFeedback
@@ -162,6 +162,6 @@ const styles = StyleSheet.create({
     justifyContent:'center'
   },
   btnText:{
-    fontSize:10
+    fontSize:12
   }
 })
