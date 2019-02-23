@@ -26,17 +26,17 @@ export default class Home extends Component<Props> {
                 'threebed':true,
                 'threeupbed':true,
             },
-            houses:[],
+            houses:this.props.houses,
         };
     }
 
     componentWillMount(){
-        get('/adds', (response) =>{
-            console.log(response);
-            if(response.data !== null){
-                this.setState({houses:response.data});
-            }
-        })
+
+    }
+
+    componentWillReceiveProps(){
+        this.setState({watchChange:!this.state.watchChange});
+        console.log(this.props)
     }
 
     render() {
@@ -44,8 +44,9 @@ export default class Home extends Component<Props> {
             <View>
                 <Search />
                 <FlatList style={{height:Dimensions.get('window').height-100}}
-                    data={this.state.houses.data}
-                    renderItem={({item}) => <SingleRent houseData = {item} />}
+                    extraData={this.state.watchChange}
+                    data={this.state.houses}
+                    renderItem={({item, index}) => <SingleRent key={index} houseData = {item} last = {this.state.houses.length == index+1 ? true : false}  />}
                 />
             </View>
         );

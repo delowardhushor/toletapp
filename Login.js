@@ -49,7 +49,7 @@ export default class Login extends Component<Props> {
             mobile:this.state.mobile, 
             password:this.state.password
         }, (response) => {
-            console.log(response);
+
             if(response.data !== null){
                 ToastAndroid.show('Welcome', 1000);
                 setLocal('user', response.data);
@@ -65,7 +65,7 @@ export default class Login extends Component<Props> {
             mobile:this.state.mobile, 
             password:this.state.password
         }, (response) => {
-            console.log(response);
+
             if(response.data !== null){
                 ToastAndroid.show('Welcome', 1000);
                 setLocal('user', response.data);

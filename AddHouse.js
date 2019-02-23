@@ -135,7 +135,7 @@ export default class AddHouse extends Component<Props> {
       type:type,
       room:room,
       bath:bath,
-      image:"images",
+      image:JSON.stringify(images),
       location:location,
       address:address,
       square:size,

@@ -95,7 +95,7 @@ export default class Search extends Component<Props> {
                 :
                 <TouchableOpacity onPress={() =>  this.removeArea()} style={styles.areaHeader}>
                     <Text style={styles.selectAreaText}>{this.state.selectedArea}</Text>
-                    <Text style={styles.searchIcon}><Icon name='times' size={14} color={theme().clr2}  /></Text>
+                    <Text style={styles.searchIcon}><Icon name='times' size={15} color={theme().clr2}  /></Text>
                 </TouchableOpacity>
                 }
                 {(this.state.selectedArea !==  '') &&
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     width:'90%',
     justifyContent:'space-between',
     alignItems:'center',
-    marginVertical:5,
+    marginVertical:7,
   },
   areaHeader:{
     flexDirection:'row', 
@@ -187,9 +187,9 @@ const styles = StyleSheet.create({
     padding:3,
   },
   searchInput:{
-      height:30,
+      height:40,
       padding:0,
-      fontSize:14,
+      fontSize:16,
       paddingHorizontal:15,
       flex:.9,
   },
@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
 },
   searchIcon:{
     textAlign:'right',
-    paddingRight:10
+    paddingRight:15
   },
   areaList:{
     width:Dimensions.get('window').width*.9,

@@ -91,8 +91,8 @@ const styles = StyleSheet.create({
     alignItems:'center',
     justifyContent:'center',
     position:'absolute',
-    top:10,
-    right:10,
+    top:12,
+    right:'5%',
   },
   houseHeader:{
     height: 50,
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
   },
   headerText:{
     color:theme().clr,
-    fontSize:14
+    fontSize:16,
   },
   singleImage:{
     height:100, 

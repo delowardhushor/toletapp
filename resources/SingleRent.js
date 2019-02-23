@@ -7,7 +7,7 @@ type Props = {};
 export default class SingleRent extends Component<Props> {
   render() {
     return (
-        <View style={styles.singleHouse}>
+        <View style={[styles.singleHouse, {marginBottom:this.props.last === true ? 100 : 0 }]}>
             <Image 
                 style={{height:200,width:"100%", }}
                 source={{uri: 'https://www.mcdonaldjoneshomes.com.au/sites/default/files/designs/feature_images/granny-flat-9-living-kitchen-alfresco-r.jpg'}}
