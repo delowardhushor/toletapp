@@ -9,12 +9,11 @@ type Props = {};
 export default class Settings extends Component<Props> {
 
   signout(){
-    this.props.signout();
-    
+    this.props.signout(); 
   }
 
   render() {
-    console.log(this)
+
     return (
       <View style={styles.container}>
         <View style={styles.adoutTolet}>

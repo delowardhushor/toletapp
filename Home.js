@@ -36,7 +36,6 @@ export default class Home extends Component<Props> {
 
     componentWillReceiveProps(){
         this.setState({watchChange:!this.state.watchChange});
-        console.log(this.props)
     }
 
     render() {
@@ -45,7 +44,9 @@ export default class Home extends Component<Props> {
                 <Search />
                 <FlatList style={{height:Dimensions.get('window').height-100}}
                     extraData={this.state.watchChange}
-                    data={this.state.houses}
+                    data={this.props.houses}
+                    initialNumToRender={2}
+                    keyExtractor={(item, index) => index.toString()}
                     renderItem={({item, index}) => <SingleRent key={index} houseData = {item} last = {this.state.houses.length == index+1 ? true : false}  />}
                 />
             </View>

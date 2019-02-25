@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, TouchableNativeFeedback} from 'react-native';
+import {Platform, StyleSheet, Text, View, TouchableNativeFeedback, Dimensions, ScrollView} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { createBottomTabNavigator } from 'react-navigation';
 import Home from './Home';
@@ -7,6 +7,7 @@ import Settings from './Settings';
 import Loved from './Loved';
 import Myhouse from './Myhouse';
 import {theme} from './lib/theme';
+import BottomNavigation, { FullTab ,Badge,ShiftingTab} from 'react-native-material-bottom-navigation';
 
 import {post, setLocal, getLocal, get, resetLocal } from './lib/utilies';
 
@@ -56,9 +57,8 @@ export default class App extends Component<Props> {
 
   signout = () => {
     this.setState({myhouse:[]});
+    this.setState({activeScreen:'Home'});
     resetLocal('user');
-    //createBottomTabNavigator.navigate("Home")
-    //console.log(createBottomTabNavigator.navigator)
   }
 
   chkClr(screen){
@@ -69,74 +69,81 @@ export default class App extends Component<Props> {
     }
   }
 
-  render() {
-    const BottomTab = createBottomTabNavigator(
-      {
-        Home: props => <Home houses={this.state.houses} />,
-        Myhouse: props => <Myhouse myhouse={this.state.myhouse} />, 
-        Loved: props => <Loved />,
-        Settings: props => <Settings signout={this.signout} />,
-      },
-      {
-        navigationOptions: ({ navigation }) => ({
-          tabBarIcon: ({ focused, tintColor }) => {
-            const { routeName } = navigation.state;
-            let iconName;
-            if (routeName === 'Home') {
-              iconName = 'home';
-            }if (routeName === 'Myhouse') {
-              iconName = 'map-signs';
-            } else if (routeName === 'Settings') {
-              iconName = 'cog';
-            }else if (routeName === 'Loved') {
-              iconName = 'heart';
-            }
-            return <Icon name={iconName} size={20} color={tintColor} />;
-          },
-        }),
-        tabBarOptions: {
-          activeTintColor: theme().backClr,
-          inactiveTintColor: theme().clr,
+  cngSrn(srn, srlPosition){
+    this.setState({activeScreen:srn});
+    this.navigationSrl.scrollTo({x: srlPosition, y: 0, animated: true})
+  }
+
+  returnTab = () => {
+      return [
+        {
+          key: 'Home',
+          icon: 'home',
+          label: "Home",
+          barColor: '#ca0000',
+          pressColor: 'rgba(255, 255, 255, 0.16)'
         },
-      }
-    );
-    console.log(this)
+        {
+          key: 'Myhouse',
+          icon: 'briefcase',
+          label: "Myhouse",
+          barColor: '#9400D3',
+          pressColor: 'rgba(255, 255, 255, 0.16)'
+        },
+        {
+          key: 'Loved',
+          icon: 'university',
+          label: "Loved",
+          barColor: '#8B008B',
+          pressColor: 'rgba(255, 255, 255, 0.16)'
+        },
+        {
+          key: 'Settings',
+          icon: 'cogs',
+          label: "Settings",
+          barColor: '#F06292',
+          pressColor: 'rgba(255, 255, 255, 0.16)'
+        }
+      ];
+  }
+
+  enderIcon = icon => ({ isActive }) => (
+    <Icon size={24} color="white" name={icon} />
+  )
+ 
+  renderTab = ({ tab, isActive }) => (
+    <FullTab
+      isActive={isActive}
+      key={tab.key}
+      label={tab.label}
+      renderIcon={this.renderIcon(tab.icon)}
+    />
+  )
+
+  renderIcon = icon => ({ isActive }) => (
+    <Icon size={24} color="white" name={icon} />
+  )
+
+  changeActiveTab(tab){
+    this.setState({activeScreen:tab});
+  }
+
+
+
+  render() {
     return (
-      <View style={{flex:1}}>
-        <View style={styles.bottomNav}>
-          <TouchableNativeFeedback
-              onPress={this._onPressButton}
-              background={TouchableNativeFeedback.SelectableBackground()}>
-            <View style={styles.btnETxWrapper}>
-              <Icon name="home" size={22} color={this.state.activeScreen == "Home" ? '#4ebd65' : '#000'} />
-              <Text style={[styles.btnText, {color:this.state.activeScreen == "Home" ? '#4ebd65' : '#000'}]}>Home</Text>
-            </View>
-          </TouchableNativeFeedback>
-          <TouchableNativeFeedback
-              onPress={this._onPressButton}
-              background={TouchableNativeFeedback.SelectableBackground()}>
-            <View style={styles.btnETxWrapper}>
-              <Icon name="map-signs" size={22} color={() => this.chkClr('Home')} />
-              <Text style={styles.btnText}>Home</Text>
-            </View>
-          </TouchableNativeFeedback>
-          <TouchableNativeFeedback
-              onPress={this._onPressButton}
-              background={TouchableNativeFeedback.SelectableBackground()}>
-            <View style={styles.btnETxWrapper}>
-              <Icon name="heart" size={22} color={() => this.chkClr('Home')} />
-              <Text style={styles.btnText}>Home</Text>
-            </View>
-          </TouchableNativeFeedback>
-          <TouchableNativeFeedback
-              onPress={this._onPressButton}
-              background={TouchableNativeFeedback.SelectableBackground()}>
-            <View style={styles.btnETxWrapper}>
-              <Icon name="cog" size={22} color={() => this.chkClr('Home')} />
-              <Text style={styles.btnText}>Home</Text>
-            </View>
-          </TouchableNativeFeedback>
+      <View style={{ flex: 1 }}>
+        <View style={{ flex: 1 }}>
+          {(this.state.activeScreen === 'Home') && <Home houses={this.state.houses}  />}
+          {(this.state.activeScreen === 'Myhouse') && <Myhouse houses={this.state.houses}  />}
+          {(this.state.activeScreen === 'Loved') && <Loved houses={this.state.houses}  />}
+          {(this.state.activeScreen === 'Settings') && <Settings houses={this.state.houses} />}
         </View>
+        <BottomNavigation
+          onTabPress={newTab => this.changeActiveTab(newTab.key)}
+          renderTab={this.renderTab}
+          tabs={this.returnTab()}
+        />
       </View>
     );
   }

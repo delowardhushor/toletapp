@@ -13,9 +13,7 @@ export default class Loved extends Component<Props> {
       //   </TouchableOpacity>
       // </ScrollView>
       <View style={{height:230, width:250}}>
-      <WebView
-        source={{uri: 'https://github.com/facebook/react-native'}}
-      />
+        <Text>asdfafda</Text>
       </View>
     );
   }

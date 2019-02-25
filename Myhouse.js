@@ -24,30 +24,23 @@ export default class Myhouse extends Component<Props> {
       };
   }
 
-  async componentWillMount(){
-    var loggedUser = await getLocal('user');
-    if(loggedUser.length !== null){
-      console.log(loggedUser);
-      this.setState({page:'myHouse'});
-    }
-  }
-
   changePage = (value) =>{
     this.setState({page:value});
   }
   
 
   render() {
-    const images = this.state.houseData.images.map((image) => {
-      return (
-        <TouchableOpacity>
-          <Image
-              style={styles.singleImage}
-              source={image}
-          />
-        </TouchableOpacity>
-      );
-    })
+    // var imageschk = this.state.houseData
+    // const images = this.state.houseData.images.map((image) => {
+    //   return (
+    //     <TouchableOpacity>
+    //       <Image
+    //           style={styles.singleImage}
+    //           source={image}
+    //       />
+    //     </TouchableOpacity>
+    //   );
+    // })
     return (
         <KeyboardAvoidingView enabled>
           {(this.state.page === 'Login') && 
