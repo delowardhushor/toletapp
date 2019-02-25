@@ -79,36 +79,36 @@ export default class App extends Component<Props> {
         {
           key: 'Home',
           icon: 'home',
-          label: "Home",
-          barColor: '#ca0000',
-          pressColor: 'rgba(255, 255, 255, 0.16)'
+          label: "Houses",
+          barColor: '#fff',
+          pressColor: 'rgba(0, 0,0, 0.16)'
         },
         {
           key: 'Myhouse',
-          icon: 'briefcase',
-          label: "Myhouse",
-          barColor: '#9400D3',
-          pressColor: 'rgba(255, 255, 255, 0.16)'
+          icon: 'map-signs',
+          label: "My house",
+          barColor: '#fff',
+          pressColor: 'rgba(0, 0,0, 0.16)'
         },
         {
           key: 'Loved',
-          icon: 'university',
+          icon: 'heart',
           label: "Loved",
-          barColor: '#8B008B',
-          pressColor: 'rgba(255, 255, 255, 0.16)'
+          barColor: '#fff',
+          pressColor: 'rgba(0, 0,0, 0.16)'
         },
         {
           key: 'Settings',
-          icon: 'cogs',
+          icon: 'cog',
           label: "Settings",
-          barColor: '#F06292',
-          pressColor: 'rgba(255, 255, 255, 0.16)'
+          barColor: '#fff',
+          pressColor: 'rgba(0, 0,0, 0.16)'
         }
       ];
   }
 
-  enderIcon = icon => ({ isActive }) => (
-    <Icon size={24} color="white" name={icon} />
+  renderIcon = icon => ({ isActive }) => (
+    <Icon size={20} color={isActive?"#4ebd65":"#000"} name={icon} />
   )
  
   renderTab = ({ tab, isActive }) => (
@@ -116,12 +116,9 @@ export default class App extends Component<Props> {
       isActive={isActive}
       key={tab.key}
       label={tab.label}
+      labelStyle={{color:isActive?"#4ebd65":"#000", fontSize:10}}
       renderIcon={this.renderIcon(tab.icon)}
     />
-  )
-
-  renderIcon = icon => ({ isActive }) => (
-    <Icon size={24} color="white" name={icon} />
   )
 
   changeActiveTab(tab){
