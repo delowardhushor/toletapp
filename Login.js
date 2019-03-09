@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet,WebView,ImageBackground,TouchableOpacity,Button, ToastAndroid, ScrollView, Dimensions, Text,TextInput, View} from 'react-native';
+import {Platform, StyleSheet,WebView,ImageBackground,Dimensions,TouchableOpacity,Button, ToastAndroid, ScrollView, Text,TextInput, View} from 'react-native';
 import SingleRent from './resources/SingleRent';
 import { theme } from './lib/theme';
 import {post, setLocal, getLocal } from './lib/utilies';
@@ -77,120 +77,77 @@ export default class Login extends Component<Props> {
     }
 
   render() {
+    let {height,width} = Dimensions.get('window');
     return (
-        <View style={styles.back}>
-          <View>
-            <Text style={styles.text}>Please Sign In for This Feature</Text>
-          </View>
-          
-          <View style={styles.container}>
-            {(this.state.mode == 'Up') &&
-            <TextInput 
-                style={styles.input} 
-                value={this.state.name}
-                placeholderTextColor = '#ddd'
-                placeholder='Your Name'
-                onChangeText={(name) => this.setState({name})} 
-                ref={ input => {
-                    this.inputs['name'] = input;
-                }}
-                onSubmitEditing={() => {
-                    this.focusNextField('mobile');
-                }}
-                returnKeyType='next'
-                selectTextOnFocus={true}
-                autoCapitalize="none"
-                blurOnSubmit={false}
-                autoFocus={this.state.mode === 'Up' ? true:false}
-            />
-            }
-            <TextInput 
-                style={styles.input} 
-                placeholderTextColor = '#ddd'
-                placeholder='Mobile' 
-                onChangeText={(mobile) => this.setState({mobile})} 
-                ref={ input => {
-                    this.inputs['mobile'] = input;
-                }}
-                onSubmitEditing={() => {
-                    this.focusNextField('password');
-                }}
-                returnKeyType='next'
-                selectTextOnFocus={true}
-                autoCapitalize="none"
-                blurOnSubmit={false}
-                autoFocus={this.state.mode === 'In' ? true:false}
-            />
-            <TextInput 
-                style={styles.input} 
-                placeholderTextColor = '#ddd'
-                placeholder='Password' 
-                onChangeText={(password) => this.setState({password})} 
-                ref={ input => {
-                    this.inputs['password'] = input;
-                }}
-                onSubmitEditing={() => {
-                    this.checkMode();
-                }}
-                returnKeyType='done'
-                selectTextOnFocus={true}
-                autoCapitalize="none"
-                blurOnSubmit={true}
-                secureTextEntry={true}
-            />
-          </View>
-          <TouchableOpacity onPress={() => this.checkMode()} style={styles.fillButton}>
-            <Text style={[styles.text, {color:'#fff'}]}>Sign {this.state.mode}</Text>
-          </TouchableOpacity>
-          {(this.state.mode === 'In') &&
-          <TouchableOpacity onPress={() => this.props.changePage('ForgetPass')} >
-            <Text style={[styles.text, {color:'#fff'}]}>Forget Password?</Text>
-          </TouchableOpacity>
-          }
-          <TouchableOpacity onPress={() => this.changeMode()} style={styles.strokButton}>
-            <Text style={styles.text}>{this.state.mode === 'In' ? "Don't" : ''} Have a Account?</Text>
-          </TouchableOpacity>
-        </View>
+        <ImageBackground source={{uri:'https://falgunit.com/tolet/img/1.png'}} style={{width: width, height: height, position:'relative'}}>
+            <Text>Inside</Text>
+            <ImageBackground 
+                source={{uri:'https://falgunit.com/tolet/img/1.png'}} 
+                style={[{
+                    width:width*.7, 
+                    height:height*.7,
+                    position: 'absolute',
+                    top:height*.1,
+                    right:'0%',
+                    borderTopLeftRadius:30,
+                    borderBottomLeftRadius:30,
+                    overflow:'hidden',
+                    alignItems:'center',
+                    justifyContent:'center',
+                    zIndex:1
+                }, styles.shadow]}>
+                <View style={{position:'relative', height:'100%', width:'100%', alignItems:'center', justifyContent:'center'}}>
+                <Text style={styles.bigText}>Sign up</Text>
+                <ScrollView style={{paddingBottom:200}}>
+                    <Text>Hwllo</Text>
+                </ScrollView>
+                </View>
+            </ImageBackground>
+            <TouchableOpacity style={[{backgroundColor:'#fff', height:35, width:100,borderRadius:30,
+                justifyContent:'center', alignItems:'center', position:'absolute', right:width*.2, bottom:height*.175, zIndex:2}, styles.shadow]}>
+                <Text style={{}}>Signup</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.signBtn, styles.shadow]}>
+                <Text style={{color:'#fff'}}>
+                    Sign In
+                </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.signBtn,styles.shadow ,{top:'43%'}]}>
+                <Text style={{color:'#fff'}}>
+                    Sign Up
+                </Text>
+            </TouchableOpacity>
+        </ImageBackground>
     );
   }
 }
 
 const styles = StyleSheet.create({
-    container: {
-        alignSelf:'center',
-        width:'90%'
+    shadow:{
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 5,
+        },
+        shadowOpacity: 0.34,
+        shadowRadius: 6.27,
+        elevation: 10,
     },
-    back:{
-        backgroundColor:theme().clr,
-        height:'100%',
-        flexDirection:'column',
-        justifyContent:'space-around',
+    signBtn:{
+        height:35,
+        width:70,
+        backgroundColor:'#cc76fd',
+        position:'absolute',
+        borderTopRightRadius:30,
+        borderBottomRightRadius:30,
+        top:'35%',
+        left:0,
+        justifyContent:'center',
         alignItems:'center'
     },
-    input:{
-        borderBottomWidth:1,
-        borderBottomColor:theme().backClr,
-        textAlign:'center',
-        color:theme().backClr
-    },
-    text:{
-        fontSize:12,
-        fontWeight:'200',
-        color:theme().backClr
-    },
-    fillButton:{
-        width:'60%',
-        alignItems:'center',
-        paddingVertical:10,
-        backgroundColor:theme().backClr,
-        borderRadius:20,
-    },
-    strokButton:{
-        width:'60%',
-        alignItems:'center',
-        paddingVertical:10,
-        borderWidth:1,
-        borderColor:theme().backClr,
-        borderRadius:20,
+    bigText:{
+        fontWeight:'100',
+        color:'#ddd',
+        fontSize:34
     }
 });
