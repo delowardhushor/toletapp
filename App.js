@@ -37,6 +37,10 @@ export default class App extends Component<Props> {
     }
   }
 
+  updateUser = (user) => {
+    this.setState({user:user});
+  }
+
   getAllHouseWithMy = (user) => {
     post('/all', (response) =>{
       console.log(response)
@@ -57,6 +61,7 @@ export default class App extends Component<Props> {
 
   signout = () => {
     this.setState({myhouse:[]});
+    this.setState({user:[]});
     this.setState({activeScreen:'Home'});
     resetLocal('user');
   }
@@ -131,10 +136,18 @@ export default class App extends Component<Props> {
     return (
       <View style={{ flex: 1 }}>
         <View style={{ flex: 1 }}>
-          {(this.state.activeScreen === 'Home') && <Home houses={this.state.houses}  />}
-          {(this.state.activeScreen === 'Myhouse') && <Myhouse houses={this.state.houses}  />}
-          {(this.state.activeScreen === 'Loved') && <Loved houses={this.state.houses}  />}
-          {(this.state.activeScreen === 'Settings') && <Settings houses={this.state.houses} />}
+          {(this.state.activeScreen === 'Home') && 
+            <Home houses={this.state.houses}  />
+          }
+          {(this.state.activeScreen === 'Myhouse') && 
+            <Myhouse updateUser={this.updateUser} user={this.state.user} houses={this.state.houses}  />
+          }
+          {(this.state.activeScreen === 'Loved') && 
+            <Loved houses={this.state.houses}  />
+          }
+          {(this.state.activeScreen === 'Settings') && 
+            <Settings houses={this.state.houses} signout={this.signout} />
+          }
         </View>
         <BottomNavigation
           onTabPress={newTab => this.changeActiveTab(newTab.key)}

@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet,WebView,TouchableOpacity,Modal,KeyboardAvoidingView, ImageBackground,AsyncStorage, ScrollView, Dimensions, Text,TextInput, View} from 'react-native';
+import {Platform, StyleSheet,WebView,TouchableOpacity, ToastAndroid, Modal,KeyboardAvoidingView, ImageBackground,AsyncStorage, ScrollView, Dimensions, Text,TextInput, View} from 'react-native';
 import SingleRent from './resources/SingleRent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { theme } from './lib/theme';
 import Login from './Login';
 import ForgetPass from './ForgetPass';
 import ConfirmCode from './ConfirmCode';
-import { getLocal } from './lib/utilies';
+import {setLocal, getLocal , post} from './lib/utilies';
 import AddHouse from './AddHouse';
 
 
@@ -17,15 +17,47 @@ export default class Myhouse extends Component<Props> {
   constructor(props) {
       super(props);
       this.state = {
-          page : 'Login',
-          houseData: {
-            images:[]
-          },
+          page : 'myHouse',
+          watchChange: true,
+          pendingMobile: '',
+          pendingPass: '',
       };
+  }
+
+  componentWillReceiveProps(){
+
+  }
+
+  setPendingUser = (mobile, pass) => {
+    this.setState({pendingMobile:mobile});
+    this.setState({pendingPass:pass});
+  }
+
+  componentWillMount(){
+    if(this.props.user.length == 0 ){
+      this.changePage('Login');
+    }
   }
 
   changePage = (value) =>{
     this.setState({page:value});
+  }
+
+  confirmCode = (pin) => {
+    post('/verify', {
+        mobile:this.state.pendingMobile, 
+        password:this.state.pendingPass,
+        pin:pin,
+    }, (response) => {
+        console.log(response);
+        if(response.data.success){
+            ToastAndroid.show("Welcome to The World Of Home", 3000);
+            setLocal('user', response.data.userdata);
+            this.changePage('myHouse');
+        }else{
+            ToastAndroid.show(response.data.msg, 3000);
+        }
+    });
   }
   
 
@@ -44,13 +76,13 @@ export default class Myhouse extends Component<Props> {
     return (
         <KeyboardAvoidingView enabled>
           {(this.state.page === 'Login') && 
-            <Login changePage={this.changePage} />
+            <Login updateUser={this.props.updateUser} setPendingUser={this.setPendingUser} changePage={this.changePage} />
           }
           {(this.state.page === 'ForgetPass') && 
             <ForgetPass changePage={this.changePage} />
           }
           {(this.state.page === 'ConfirmCode') && 
-            <ConfirmCode changePage={this.changePage} />
+            <ConfirmCode confirmCode={this.confirmCode} changePage={this.changePage} />
           }
           {(this.state.page === 'myHouse') && 
             <View>

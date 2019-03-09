@@ -49,13 +49,13 @@ export default class Login extends Component<Props> {
             mobile:this.state.mobile, 
             password:this.state.password
         }, (response) => {
-
-            if(response.data !== null){
-                ToastAndroid.show('Welcome', 1000);
-                setLocal('user', response.data);
-                this.props.changePage('myHouse');
+            console.log(response)
+            if(response.data.success){
+                ToastAndroid.show("Please Confirm Pin", 3000);
+                this.props.setPendingUser(this.state.mobile,this.state.password);
+                this.props.changePage('ConfirmCode');
             }else{
-                ToastAndroid.show(response.data.msg, 1000);
+                ToastAndroid.show(response.data.msg, 3000);
             }
         });
     }
@@ -65,13 +65,13 @@ export default class Login extends Component<Props> {
             mobile:this.state.mobile, 
             password:this.state.password
         }, (response) => {
-
-            if(response.data !== null){
+            if(response.data.success){
                 ToastAndroid.show('Welcome', 1000);
-                setLocal('user', response.data);
+                setLocal('user', response.data.userdata);
+                this.props.updateUser(response.data.userdata);
                 this.props.changePage('myHouse');
             }else{
-                ToastAndroid.show(response.data.msg, 1000);
+                ToastAndroid.show(response.data.msg, 3000);
             }
         });
     }

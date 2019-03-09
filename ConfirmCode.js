@@ -29,10 +29,10 @@ export default class ConfirmCode extends Component<Props> {
                 style={styles.input} 
                 placeholderTextColor = '#ddd'
                 placeholder='Code' 
-                onChangeText={(mobile) => this.setState({mobile})} 
+                onChangeText={(pin) => this.setState({pin})} 
             />
           </View>
-          <TouchableOpacity onPress={() => this.confirmCode()} style={styles.fillButton}>
+          <TouchableOpacity onPress={() => this.props.confirmCode(this.state.pin)} style={styles.fillButton}>
             <Text style={[styles.text, {color:'#fff'}]}>Send</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => this.props.changePage('Login')} style={styles.strokButton}>
