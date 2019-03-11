@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet,WebView,ImageBackground,Dimensions,TouchableOpacity,Button, ToastAndroid, ScrollView, Text,TextInput, View} from 'react-native';
+import {Platform, StyleSheet,WebView,Animated, Easing,Modal, ImageBackground,Dimensions,Keyboard, TouchableOpacity,Button, ToastAndroid, ScrollView, Text,TextInput, View} from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import SingleRent from './resources/SingleRent';
 import { theme } from './lib/theme';
 import {post, setLocal, getLocal } from './lib/utilies';
@@ -76,19 +77,66 @@ export default class Login extends Component<Props> {
         });
     }
 
+    componentWillMount() {
+        this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow);
+        this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide);
+        this.animatedSignup = new Animated.Value(-Dimensions.get('window').width*.7);
+        this.animatedSignin = new Animated.Value(-Dimensions.get('window').width*.7);
+    }
+
+    componentDidMount(){
+        this.showSignIn();
+    }
+
+    anim(section, value, time){
+        Animated.timing(section, {
+            toValue:value,
+            duration:time,
+            easing:Easing.bounce
+        }).start();
+    }
+
+    showSignIn(){
+        this.anim(this.animatedSignup, -Dimensions.get('window').width*.7, 100);
+        this.anim(this.animatedSignin, 0, 600);
+        this.setState({mode:'In'});
+    }
+
+    showSignUp(){
+        this.anim(this.animatedSignin, -Dimensions.get('window').width*.7, 100);
+        this.anim(this.animatedSignup, 0, 600);
+        this.setState({mode:'Up'});
+    }
+
+    componentWillUnmount() {
+        this.keyboardDidShowSub.remove();
+        this.keyboardDidHideSub.remove();
+    }
+
+    handleKeyboardDidShow = (event) => {
+
+    }
+
+    handleKeyboardDidHide = () => {
+        this.Scroll.scrollTo({x: 0, y: 0, animated: true})
+    }
+
   render() {
     let {height,width} = Dimensions.get('window');
     return (
+        <Modal visible={true}>
+        <ScrollView
+        showsVerticalScrollIndicator={false}
+          ref={(c) => { this.Scroll = c }}
+          scrollEnabled={false}>
         <ImageBackground source={{uri:'https://falgunit.com/tolet/img/1.png'}} style={{width: width, height: height, position:'relative'}}>
-            <Text>Inside</Text>
-            <ImageBackground 
-                source={{uri:'https://falgunit.com/tolet/img/1.png'}} 
+            <Animated.View
                 style={[{
                     width:width*.7, 
                     height:height*.7,
                     position: 'absolute',
                     top:height*.1,
-                    right:'0%',
+                    right:this.animatedSignup,
                     borderTopLeftRadius:30,
                     borderBottomLeftRadius:30,
                     overflow:'hidden',
@@ -96,28 +144,167 @@ export default class Login extends Component<Props> {
                     justifyContent:'center',
                     zIndex:1
                 }, styles.shadow]}>
-                <View style={{position:'relative', height:'100%', width:'100%', alignItems:'center', justifyContent:'center'}}>
-                <Text style={styles.bigText}>Sign up</Text>
-                <ScrollView style={{paddingBottom:200}}>
-                    <Text>Hwllo</Text>
-                </ScrollView>
-                </View>
+            <ImageBackground 
+                source={{uri:'https://falgunit.com/tolet/img/1.png'}} 
+                style={{width:'100%', height:'100%', alignItems:'center'}}>                
+                <View style={{paddingTop:10, width:'80%',alignItems:'center',justifyContent:'center'}}>
+                    <Text style={styles.bigText}>Sign Up</Text>
+                    <View style={{width:'100%'}}>
+                        <View style={styles.label}>
+                            <Text style={styles.labelText}>Name</Text>
+                            <Icon name="user" size={16} color="rgba(255,255,255,0.5)" />
+                        </View>
+                        <TextInput 
+                            style={styles.input} 
+                            onChangeText={(name) => this.setState({name})} 
+                            ref={ input => {
+                                this.inputs['name'] = input;
+                            }}
+                            onSubmitEditing={() => {
+                                this.focusNextField('mobile');
+                            }}
+                            returnKeyType='next'
+                            selectTextOnFocus={true}
+                            autoCapitalize="none"
+                            blurOnSubmit={false}
+                            autoFocus={this.state.mode === 'In' ? true:false}
+                        />
+                    </View>
+                    <View style={{width:'100%'}}>
+                        <View style={styles.label}>
+                            <Text style={styles.labelText}>Mobile Number</Text>
+                            <Icon name="phone" size={16} color="rgba(255,255,255,0.5)" />
+                        </View>
+                        <TextInput 
+                            style={styles.input} 
+                            onChangeText={(mobile) => this.setState({mobile})} 
+                            ref={ input => {
+                                this.inputs['mobile'] = input;
+                            }}
+                            onSubmitEditing={() => {
+                                this.focusNextField('password');
+                            }}
+                            returnKeyType='next'
+                            selectTextOnFocus={true}
+                            autoCapitalize="none"
+                            blurOnSubmit={false}
+                            autoFocus={this.state.mode === 'In' ? true:false}
+                        />
+                    </View>
+                    <View style={{width:'100%', paddingBottom:10}}>
+                        <View style={styles.label}>
+                            <Text style={styles.labelText}>Password</Text>
+                            <Icon name="lock" size={16} color="rgba(255,255,255,0.5)" />
+                        </View>
+                        <TextInput 
+                            style={styles.input} 
+                            onChangeText={(password) => this.setState({password})} 
+                            ref={ input => {
+                                this.inputs['password'] = input;
+                            }}
+                            onSubmitEditing={() => {
+                                this.checkMode();
+                            }}
+                            secureTextEntry={true}
+                            returnKeyType='next'
+                            selectTextOnFocus={true}
+                            autoCapitalize="none"
+                            blurOnSubmit={false}
+                        />
+                    </View>
+                    <TouchableOpacity style={[{backgroundColor:'#fff', height:35, width:100,borderRadius:30,
+                    justifyContent:'center',marginTop:15, alignItems:'center'}, styles.shadow]}>
+                        <Text style={{color:'#cc76fd'}}>Sign up</Text>
+                    </TouchableOpacity>
+                </View>                
             </ImageBackground>
-            <TouchableOpacity style={[{backgroundColor:'#fff', height:35, width:100,borderRadius:30,
-                justifyContent:'center', alignItems:'center', position:'absolute', right:width*.2, bottom:height*.175, zIndex:2}, styles.shadow]}>
-                <Text style={{}}>Signup</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.signBtn, styles.shadow]}>
+            
+            </Animated.View>
+
+
+            <Animated.View
+                style={[{
+                    width:width*.7, 
+                    height:height*.7,
+                    position: 'absolute',
+                    top:height*.1,
+                    right:this.animatedSignin,
+                    borderTopLeftRadius:30,
+                    borderBottomLeftRadius:30,
+                    overflow:'hidden',
+                    alignItems:'center',
+                    justifyContent:'center',
+                    zIndex:1
+                }, styles.shadow]}>
+            <ImageBackground 
+                source={{uri:'https://falgunit.com/tolet/img/1.png'}} 
+                style={{width:'100%', height:'100%', alignItems:'center'}}>                
+                <View style={{paddingTop:10, width:'80%',alignItems:'center',justifyContent:'center'}}>
+                    <Text style={styles.bigText}>Sign In</Text>
+                    <View style={{width:'100%'}}>
+                        <View style={styles.label}>
+                            <Text style={styles.labelText}>Mobile Number</Text>
+                            <Icon name="phone" size={16} color="rgba(255,255,255,0.5)" />
+                        </View>
+                        <TextInput 
+                            style={styles.input} 
+                            onChangeText={(mobile) => this.setState({mobile})} 
+                            ref={ input => {
+                                this.inputs['mobile'] = input;
+                            }}
+                            onSubmitEditing={() => {
+                                this.focusNextField('password');
+                            }}
+                            returnKeyType='next'
+                            selectTextOnFocus={true}
+                            autoCapitalize="none"
+                            blurOnSubmit={false}
+                            autoFocus={this.state.mode === 'In' ? true:false}
+                        />
+                    </View>
+                    <View style={{width:'100%', paddingBottom:10}}>
+                        <View style={styles.label}>
+                            <Text style={styles.labelText}>Password</Text>
+                            <Icon name="lock" size={16} color="rgba(255,255,255,0.5)" />
+                        </View>
+                        <TextInput 
+                            style={styles.input} 
+                            onChangeText={(password) => this.setState({password})} 
+                            ref={ input => {
+                                this.inputs['password'] = input;
+                            }}
+                            onSubmitEditing={() => {
+                                this.checkMode();
+                            }}
+                            secureTextEntry={true}
+                            returnKeyType='next'
+                            selectTextOnFocus={true}
+                            autoCapitalize="none"
+                            blurOnSubmit={false}
+                        />
+                    </View>
+                    <TouchableOpacity style={[{backgroundColor:'#fff', height:35, width:100,borderRadius:30,
+                    justifyContent:'center',marginTop:15, alignItems:'center'}, styles.shadow]}>
+                        <Text style={{color:'#cc76fd'}}>Sign In</Text>
+                    </TouchableOpacity>
+                </View>                
+            </ImageBackground>
+            
+            </Animated.View>
+            
+        </ImageBackground>
+            <TouchableOpacity onPress={() => this.showSignIn()} style={[styles.signBtn, styles.shadow, {width:this.state.mode === 'In' ? width*.25:width*.2}]}>
                 <Text style={{color:'#fff'}}>
                     Sign In
                 </Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.signBtn,styles.shadow ,{top:'43%'}]}>
+            <TouchableOpacity onPress={() => this.showSignUp()} style={[styles.signBtn,styles.shadow ,{top:'43%', width:this.state.mode === 'Up' ? width*.25:width*.2}]}>
                 <Text style={{color:'#fff'}}>
                     Sign Up
                 </Text>
             </TouchableOpacity>
-        </ImageBackground>
+        </ScrollView>
+        </Modal>
     );
   }
 }
@@ -131,7 +318,7 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.34,
         shadowRadius: 6.27,
-        elevation: 10,
+        elevation: 15,
     },
     signBtn:{
         height:35,
@@ -147,7 +334,32 @@ const styles = StyleSheet.create({
     },
     bigText:{
         fontWeight:'100',
-        color:'#ddd',
-        fontSize:34
+        color:'rgba(255,255,255,0.5)',
+        fontSize:34,
+        alignItems:'center'
+    },
+    input:{
+        height:40,
+        width:'100%',
+        alignSelf:'center',
+        backgroundColor:'rgba(255,255,255,0.3)',
+        color:'rgba(255,255,255,0.6)',
+        fontSize:16,
+        justifyContent:'center',
+        padding:2,
+        paddingLeft:10
+    },
+    label:{
+        alignSelf:'center',
+        width:'100%',
+        flexDirection:'row',
+        justifyContent:'space-between',
+        marginTop:20,
+        marginBottom:5,
+        alignItems:'center'
+    },
+    labelText:{
+        fontSize:14,
+        color:'rgba(255,255,255,0.5)',
     }
 });

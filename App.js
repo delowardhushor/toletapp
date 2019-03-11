@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, TouchableNativeFeedback, Dimensions, ScrollView} from 'react-native';
+import {Platform, StyleSheet, Text, View,KeyboardAvoidingView , TouchableNativeFeedback, Dimensions, ScrollView} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { createBottomTabNavigator } from 'react-navigation';
 import Home from './Home';
@@ -134,7 +134,7 @@ export default class App extends Component<Props> {
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
+      <KeyboardAvoidingView  style={{ flex: 1 }}>
         <View style={{ flex: 1 }}>
           {(this.state.activeScreen === 'Home') && 
             <Home houses={this.state.houses}  />
@@ -154,7 +154,7 @@ export default class App extends Component<Props> {
           renderTab={this.renderTab}
           tabs={this.returnTab()}
         />
-      </View>
+      </KeyboardAvoidingView >
     );
   }
 }
