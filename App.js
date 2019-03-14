@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View,KeyboardAvoidingView , TouchableNativeFeedback, Dimensions, ScrollView} from 'react-native';
+import {Platform, StyleSheet, Text, View,TouchableOpacity, KeyboardAvoidingView , TouchableNativeFeedback, Dimensions, ScrollView} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { createBottomTabNavigator } from 'react-navigation';
 import Home from './Home';
@@ -20,7 +20,7 @@ export default class App extends Component<Props> {
   constructor(props){
     super(props);
     this.state = {
-      activeScreen:"Myhouse",
+      activeScreen:"Home",
       houses:[],
       user:[],
       myhouse:[],
@@ -85,28 +85,28 @@ export default class App extends Component<Props> {
           key: 'Home',
           icon: 'home',
           label: "Houses",
-          barColor: '#fff',
+          barColor: 'transparent',
           pressColor: 'rgba(0, 0,0, 0.16)'
         },
         {
           key: 'Myhouse',
           icon: 'map-signs',
           label: "My house",
-          barColor: '#fff',
+          barColor: 'transparent',
           pressColor: 'rgba(0, 0,0, 0.16)'
         },
         {
           key: 'Loved',
           icon: 'heart',
           label: "Loved",
-          barColor: '#fff',
+          barColor: 'transparent',
           pressColor: 'rgba(0, 0,0, 0.16)'
         },
         {
           key: 'Settings',
           icon: 'cog',
           label: "Settings",
-          barColor: '#fff',
+          barColor: 'transparent',
           pressColor: 'rgba(0, 0,0, 0.16)'
         }
       ];
@@ -126,16 +126,22 @@ export default class App extends Component<Props> {
     />
   )
 
-  changeActiveTab(tab){
+  changeActiveTab = (tab, position) =>{
     this.setState({activeScreen:tab});
+    this.navScroll.scrollTo({x: position, y: 0, animated: true});
+  }
+
+  chkNavPos = (event) => {
+    console.log(this.navScroll);
   }
 
 
 
   render() {
+    let {width, height} = Dimensions.get('window');
     return (
-      <KeyboardAvoidingView  style={{ flex: 1 }}>
-        <View style={{ flex: 1 }}>
+      <View  style={{ flex: 1 , backgroundColor:'#fff'}}>
+        {/* <ScrollView horizontal={true} style={{ height:Dimensions.get('window').height - 50 }}>
           {(this.state.activeScreen === 'Home') && 
             <Home houses={this.state.houses}  />
           }
@@ -148,37 +154,78 @@ export default class App extends Component<Props> {
           {(this.state.activeScreen === 'Settings') && 
             <Settings houses={this.state.houses} signout={this.signout} />
           }
-        </View>
-        <BottomNavigation
+        </ScrollView> */}
+        <ScrollView 
+          scrollEnabled={false}
+          showsHorizontalScrollIndicator={false}
+          ref={(c) => { this.navScroll = c }} 
+          style={styles.navScroll} 
+          horizontal={true}>
+          <View style={styles.singleNav}>
+            <Home houses={this.state.houses} />
+          </View>
+          <View style={styles.singleNav}>
+            <Myhouse updateUser={this.updateUser} user={this.state.user} houses={this.state.houses} />
+          </View>
+          <View style={styles.singleNav}>
+            <Loved />
+          </View>
+          <View style={styles.singleNav}>
+            <Settings />
+          </View>
+        </ScrollView>
+        {/* <BottomNavigation
           onTabPress={newTab => this.changeActiveTab(newTab.key)}
           renderTab={this.renderTab}
           tabs={this.returnTab()}
-        />
-      </KeyboardAvoidingView >
+
+        /> */}
+        <View style={{flexDirection:'row', height:50, alignItems:'center', justifyContent:'center', backgroundColor:'#fff'}}>
+          <TouchableOpacity style={[styles.navBtn , this.state.activeScreen === "Home" ? styles.activeBtn : {}]} onPress={() => this.changeActiveTab("Home", 0)}>
+            <Icon name="home" size={20} color="#000" />
+            <Text style={styles.navBtnText}>Home</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.navBtn , this.state.activeScreen === "Myhouse" ? styles.activeBtn : {}]} onPress={() => this.changeActiveTab("Myhouse",width )}>
+            <Icon name="map-signs" size={20} color="#000" />
+            <Text style={styles.navBtnText}>My House</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.navBtn , this.state.activeScreen === "Loved" ? styles.activeBtn : {}]} onPress={() => this.changeActiveTab("Loved", width*2)}>
+            <Icon name="heart" size={20} color="#000" />
+            <Text style={styles.navBtnText}>Loved</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.navBtn , this.state.activeScreen === "Settings" ? styles.activeBtn : {}]} onPress={() => this.changeActiveTab("Settings", width*3)}>
+            <Icon name="cogs" size={20} color="#000" />
+            <Text style={styles.navBtnText}>Settings</Text>
+          </TouchableOpacity>
+        </View>
+      </View >
     );
   }
 }
 
 const styles = StyleSheet.create({
-  bottomNav: {
-    height:50,
-    width:'100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'red',
-    position:'absolute',
-    bottom:0,
-    flexDirection:'row'
-  },
-  btnETxWrapper:{
-    width: '25%', 
-    height: 50, 
-    backgroundColor: '#fff', 
-    flexDirection:'column',
+  navBtn:{
+    width:'24%',
+    height:45,
     alignItems:'center',
-    justifyContent:'center'
+    justifyContent:'center',
   },
-  btnText:{
-    fontSize:12
+  navBtnText:{
+    fontSize:11,
+    fontWeight:'900',
+    color:'#000'
+  },
+  navScroll:{
+    width:Dimensions.get('window').width,
+    height:Dimensions.get('window').height-50,
+  },
+  singleNav:{
+    width:Dimensions.get('window').width,
+    height:'100%'
+  },
+  activeBtn:{
+    borderRadius:20,
+    borderWidth:1,
+    borderColor:'#000'
   }
 })
