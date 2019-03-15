@@ -26,7 +26,7 @@ export default class Login extends Component<Props> {
     }
 
     checkMode(){
-        if(this.state.mode === 'In' && this.state.logMobile && this.state.logP){
+        if(this.state.mode === 'In' && this.state.logMobile && this.state.logPassword){
             this.login();
         }else if(this.state.mode === 'Up' && this.state.mobile && this.state.password && this.state.name){
             this.signUp();

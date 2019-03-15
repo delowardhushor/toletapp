@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View,TouchableOpacity, KeyboardAvoidingView , TouchableNativeFeedback, Dimensions, ScrollView} from 'react-native';
+import {Platform, StyleSheet, Text, View,TouchableOpacity, KeyboardAvoidingView , TouchableNativeFeedback, Dimensions, ScrollView, Animated, Easing} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { createBottomTabNavigator } from 'react-navigation';
 import Home from './Home';
@@ -12,7 +12,7 @@ import BottomNavigation, { FullTab ,Badge,ShiftingTab} from 'react-native-materi
 import {post, setLocal, getLocal, get, resetLocal } from './lib/utilies';
 
 
-
+let {width,height} = Dimensions.get('window');
 
 type Props = {};
 export default class App extends Component<Props> {
@@ -35,6 +35,7 @@ export default class App extends Component<Props> {
     }else{
       this.getAllHouse();
     }
+    this.animateNavActiveIndicator = new Animated.Value(0);
   }
 
   updateUser = (user) => {
@@ -45,7 +46,7 @@ export default class App extends Component<Props> {
     post('/all', (response) =>{
       console.log(response)
         if(response.data !== null){
-            this.setState({houses:response.data.data});
+            this.setState({houses:response.data});
         }
     })
   }
@@ -54,7 +55,7 @@ export default class App extends Component<Props> {
     get('/adds', (response) =>{
       console.log(response)
         if(response.data !== null){
-            this.setState({houses:response.data.data});
+            this.setState({houses:response.data});
         }
     })
   }
@@ -129,10 +130,18 @@ export default class App extends Component<Props> {
   changeActiveTab = (tab, position) =>{
     this.setState({activeScreen:tab});
     this.navScroll.scrollTo({x: position, y: 0, animated: true});
+    this.anim(this.animateNavActiveIndicator, (position/width)*(width*0.25), 300);
   }
 
   chkNavPos = (event) => {
     console.log(this.navScroll);
+  }
+
+  anim(section, value, time){
+      Animated.timing(section, {
+          toValue:value,
+          duration:time,
+      }).start();
   }
 
 
@@ -141,20 +150,6 @@ export default class App extends Component<Props> {
     let {width, height} = Dimensions.get('window');
     return (
       <View  style={{ flex: 1 , backgroundColor:'#fff'}}>
-        {/* <ScrollView horizontal={true} style={{ height:Dimensions.get('window').height - 50 }}>
-          {(this.state.activeScreen === 'Home') && 
-            <Home houses={this.state.houses}  />
-          }
-          {(this.state.activeScreen === 'Myhouse') && 
-            <Myhouse updateUser={this.updateUser} user={this.state.user} houses={this.state.houses}  />
-          }
-          {(this.state.activeScreen === 'Loved') && 
-            <Loved houses={this.state.houses}  />
-          }
-          {(this.state.activeScreen === 'Settings') && 
-            <Settings houses={this.state.houses} signout={this.signout} />
-          }
-        </ScrollView> */}
         <ScrollView 
           scrollEnabled={false}
           showsHorizontalScrollIndicator={false}
@@ -162,7 +157,7 @@ export default class App extends Component<Props> {
           style={styles.navScroll} 
           horizontal={true}>
           <View style={styles.singleNav}>
-            <Home houses={this.state.houses} />
+              <Home houses={this.state.houses} />
           </View>
           <View style={styles.singleNav}>
             <Myhouse updateUser={this.updateUser} user={this.state.user} houses={this.state.houses} />
@@ -174,13 +169,12 @@ export default class App extends Component<Props> {
             <Settings />
           </View>
         </ScrollView>
-        {/* <BottomNavigation
-          onTabPress={newTab => this.changeActiveTab(newTab.key)}
-          renderTab={this.renderTab}
-          tabs={this.returnTab()}
-
-        /> */}
-        <View style={{flexDirection:'row', height:50, alignItems:'center', justifyContent:'center', backgroundColor:'#fff'}}>
+        <View style={{height:5, width:width, position:'relative'}}>
+          <Animated.View style={{position:'absolute',left:this.animateNavActiveIndicator, width:width/4}}>
+            <View style={{height:3,marginHorizontal:20, backgroundColor:'#000', borderRadius:5}}></View>
+          </Animated.View>
+        </View>
+        <View style={{flexDirection:'row',position:'relative', height:40, alignItems:'center', justifyContent:'space-around', backgroundColor:'#fff'}}>
           <TouchableOpacity style={[styles.navBtn , this.state.activeScreen === "Home" ? styles.activeBtn : {}]} onPress={() => this.changeActiveTab("Home", 0)}>
             <Icon name="home" size={20} color="#000" />
             <Text style={styles.navBtnText}>Home</Text>
@@ -205,8 +199,8 @@ export default class App extends Component<Props> {
 
 const styles = StyleSheet.create({
   navBtn:{
-    width:'24%',
-    height:45,
+    width:'20%',
+    height:40,
     alignItems:'center',
     justifyContent:'center',
   },
@@ -225,7 +219,7 @@ const styles = StyleSheet.create({
   },
   activeBtn:{
     borderRadius:20,
-    borderWidth:1,
+    //borderWidth:1,
     borderColor:'#000'
   }
 })
