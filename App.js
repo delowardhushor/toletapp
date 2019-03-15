@@ -130,7 +130,7 @@ export default class App extends Component<Props> {
   changeActiveTab = (tab, position) =>{
     this.setState({activeScreen:tab});
     this.navScroll.scrollTo({x: position, y: 0, animated: true});
-    this.anim(this.animateNavActiveIndicator, (position/width)*(width*0.25), 300);
+    this.anim(this.animateNavActiveIndicator, (position/width)*(width*0.25), 450);
   }
 
   chkNavPos = (event) => {
