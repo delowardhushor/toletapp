@@ -13,7 +13,9 @@ export default class Login extends Component<Props> {
         super(props);
         this.state = {
             mode : 'In',
-            modelVisible:true,
+            showPin : false,
+            showForget : false,
+            scrollEnable : false
         };
         this.focusNextField = this.focusNextField.bind(this);
         this.inputs = {};
@@ -44,25 +46,39 @@ export default class Login extends Component<Props> {
             console.log(response)
             if(response.data.success){
                 ToastAndroid.show("Please Confirm Pin", 3000);
-                this.props.setPendingUser(this.state.mobile,this.state.password);
-                this.setState({modelVisible:false});
-                this.props.changePage('ConfirmCode');
+                this.setState({showPin:true});
             }else{
                 ToastAndroid.show(response.data.msg, 3000);
             }
         });
     }
 
+    confirmPin = (pin) => {
+        post('/verify', {
+            mobile:this.state.mobile, 
+            password:this.state.password,
+            pin:this.state.pin,
+        }, (response) => {
+            if(response.data.success){
+                ToastAndroid.show("Welcome to The World Of Home", 3000);
+                setLocal('user', response.data.userdata);
+                this.props.updateUser(response.data.userdata);
+                this.props.changePage('myHouse');
+            }else{
+                ToastAndroid.show(response.data.msg, 3000);
+            }
+        });
+      }
+
     login(){
         post('/signin', {
-            mobile:this.state.mobile, 
-            password:this.state.password
+            mobile:this.state.logMobile, 
+            password:this.state.logPassword
         }, (response) => {
             if(response.data.success){
                 ToastAndroid.show('Welcome', 1000);
                 setLocal('user', response.data.userdata);
                 this.props.updateUser(response.data.userdata);
-                this.setState({modelVisible:false});
                 this.props.changePage('myHouse');
             }else{
                 ToastAndroid.show(response.data.msg, 3000);
@@ -92,12 +108,16 @@ export default class Login extends Component<Props> {
     showSignIn(){
         this.anim(this.animatedSignup, -Dimensions.get('window').width*.7, 300);
         this.anim(this.animatedSignin, 0, 600);
+        this.setState({showForget:false});
+        this.setState({showPin:false});
         this.setState({mode:'In'});
     }
 
     showSignUp(){
         this.anim(this.animatedSignin, -Dimensions.get('window').width*.7, 300);
         this.anim(this.animatedSignup, 0, 600);
+        this.setState({showForget:false});
+        this.setState({showPin:false});
         this.setState({mode:'Up'});
     }
 
@@ -107,11 +127,12 @@ export default class Login extends Component<Props> {
     }
 
     handleKeyboardDidShow = (event) => {
-
+        this.setState({scrollEnable:true});
     }
 
     handleKeyboardDidHide = () => {
-        this.Scroll.scrollTo({x: 0, y: 0, animated: true})
+        this.Scroll.scrollTo({x: 0, y: 0, animated: true});
+        this.setState({scrollEnable:false});
     }
 
   render() {
@@ -120,7 +141,7 @@ export default class Login extends Component<Props> {
         <ScrollView
         showsVerticalScrollIndicator={false}
           ref={(c) => { this.Scroll = c }}
-          scrollEnabled={false}>
+          scrollEnabled={this.state.scrollEnable}>
         <ImageBackground source={{uri:'https://falgunit.com/tolet/img/1.png'}} style={{width: width, height: height, position:'relative'}}>
             <View style={{position:'absolute', width:width*2,height:width*2,borderRadius:width,backgroundColor:'#fff', top:-width*1.5,left:-width}}>    
             </View>
@@ -141,78 +162,110 @@ export default class Login extends Component<Props> {
                     justifyContent:'center',
                     zIndex:1
                 }, styles.shadow]}>
-            <ImageBackground 
-                source={{uri:'https://falgunit.com/tolet/img/1.png'}} 
-                style={{width:'100%', height:'100%', alignItems:'center'}}>                
-                <View style={{paddingTop:10, width:'80%',alignItems:'center',justifyContent:'center'}}>
-                    <Text style={styles.bigText}>Sign Up</Text>
-                    <View style={{width:'100%'}}>
-                        <View style={styles.label}>
-                            <Text style={styles.labelText}>Name</Text>
-                            <Icon name="user" size={16} color="rgba(255,255,255,0.5)" />
-                        </View>
-                        <TextInput 
-                            style={styles.input} 
-                            onChangeText={(name) => this.setState({name})} 
-                            ref={ input => {
-                                this.inputs['name'] = input;
-                            }}
-                            onSubmitEditing={() => {
-                                this.focusNextField('mobile');
-                            }}
-                            returnKeyType='next'
-                            selectTextOnFocus={true}
-                            autoCapitalize="none"
-                            blurOnSubmit={false}
-                        />
-                    </View>
-                    <View style={{width:'100%'}}>
-                        <View style={styles.label}>
-                            <Text style={styles.labelText}>Mobile Number</Text>
-                            <Icon name="phone" size={16} color="rgba(255,255,255,0.5)" />
-                        </View>
-                        <TextInput 
-                            style={styles.input} 
-                            onChangeText={(mobile) => this.setState({mobile})} 
-                            ref={ input => {
-                                this.inputs['mobile'] = input;
-                            }}
-                            onSubmitEditing={() => {
-                                this.focusNextField('password');
-                            }}
-                            returnKeyType='next'
-                            selectTextOnFocus={true}
-                            autoCapitalize="none"
-                            blurOnSubmit={false}
-                        />
-                    </View>
-                    <View style={{width:'100%', paddingBottom:10}}>
-                        <View style={styles.label}>
-                            <Text style={styles.labelText}>Password</Text>
-                            <Icon name="lock" size={16} color="rgba(255,255,255,0.5)" />
-                        </View>
-                        <TextInput 
-                            style={styles.input} 
-                            onChangeText={(password) => this.setState({password})} 
-                            ref={ input => {
-                                this.inputs['password'] = input;
-                            }}
-                            onSubmitEditing={() => {
-                                this.checkMode();
-                            }}
-                            secureTextEntry={true}
-                            returnKeyType='next'
-                            selectTextOnFocus={true}
-                            autoCapitalize="none"
-                            blurOnSubmit={false}
-                        />
-                    </View>
-                    <TouchableOpacity onPress={() => this.checkMode()} style={[{backgroundColor:'#fff', height:35, width:100,borderRadius:30,
-                    justifyContent:'center',marginTop:15, alignItems:'center'}, styles.shadow]}>
-                        <Text style={{color:'#cc76fd'}}>Sign up</Text>
-                    </TouchableOpacity>
-                </View>                
-            </ImageBackground>
+                <ImageBackground 
+                    source={{uri:'https://falgunit.com/tolet/img/1.png'}} 
+                    style={{width:'100%', height:'100%', alignItems:'center'}}>  
+                    {(!this.state.showPin) &&              
+                        <View style={{paddingTop:10, width:'80%',alignItems:'center',justifyContent:'center'}}>
+                            <Text style={styles.bigText}>SIGN UP</Text>
+                            <View style={{width:'100%'}}>
+                                <View style={styles.label}>
+                                    <Text style={styles.labelText}>Name</Text>
+                                    <Icon name="user" size={16} color="rgba(255,255,255,0.5)" />
+                                </View>
+                                <TextInput 
+                                    style={styles.input} 
+                                    onChangeText={(name) => this.setState({name})} 
+                                    ref={ input => {
+                                        this.inputs['name'] = input;
+                                    }}
+                                    onSubmitEditing={() => {
+                                        this.focusNextField('mobile');
+                                    }}
+                                    returnKeyType='next'
+                                    selectTextOnFocus={true}
+                                    autoCapitalize="none"
+                                    blurOnSubmit={false}
+                                />
+                            </View>
+                            <View style={{width:'100%'}}>
+                                <View style={styles.label}>
+                                    <Text style={styles.labelText}>Mobile Number</Text>
+                                    <Icon name="phone" size={16} color="rgba(255,255,255,0.5)" />
+                                </View>
+                                <TextInput 
+                                    style={styles.input} 
+                                    onChangeText={(mobile) => this.setState({mobile})} 
+                                    ref={ input => {
+                                        this.inputs['mobile'] = input;
+                                    }}
+                                    onSubmitEditing={() => {
+                                        this.focusNextField('password');
+                                    }}
+                                    returnKeyType='next'
+                                    selectTextOnFocus={true}
+                                    autoCapitalize="none"
+                                    blurOnSubmit={false}
+                                />
+                            </View>
+                            <View style={{width:'100%', paddingBottom:10}}>
+                                <View style={styles.label}>
+                                    <Text style={styles.labelText}>Password</Text>
+                                    <Icon name="lock" size={16} color="rgba(255,255,255,0.5)" />
+                                </View>
+                                <TextInput 
+                                    style={styles.input} 
+                                    onChangeText={(password) => this.setState({password})} 
+                                    ref={ input => {
+                                        this.inputs['password'] = input;
+                                    }}
+                                    onSubmitEditing={() => {
+                                        this.checkMode();
+                                    }}
+                                    secureTextEntry={true}
+                                    returnKeyType='next'
+                                    selectTextOnFocus={true}
+                                    autoCapitalize="none"
+                                    blurOnSubmit={false}
+                                />
+                            </View>
+                            <TouchableOpacity onPress={() => this.checkMode()} style={[{backgroundColor:'#fff', height:35, width:100,borderRadius:30,
+                            justifyContent:'center',marginTop:15, alignItems:'center'}, styles.shadow]}>
+                                <Text style={{color:'#cc76fd'}}>Sign Up</Text>
+                            </TouchableOpacity>
+                        </View> 
+                    }
+                    {(this.state.showPin) &&
+                        <View style={{paddingTop:10, width:'80%',alignItems:'center',justifyContent:'center'}}>
+                            <Text style={styles.bigText}>Verification Pin</Text>
+                            <View style={{width:'100%', paddingBottom:10}}>
+                                <View style={styles.label}>
+                                    <Text style={styles.labelText}>Pin</Text>
+                                    <Icon name="lock" size={16} color="rgba(255,255,255,0.5)" />
+                                </View>
+                                <TextInput 
+                                    style={styles.input} 
+                                    onChangeText={(pin) => this.setState({pin})} 
+                                    ref={ input => {
+                                        this.inputs['pin'] = input;
+                                    }}
+                                    onSubmitEditing={() => {
+                                        this.confirmPin();
+                                    }}
+                                    secureTextEntry={true}
+                                    returnKeyType='next'
+                                    selectTextOnFocus={true}
+                                    autoCapitalize="none"
+                                    blurOnSubmit={false}
+                                />
+                            </View>
+                            <TouchableOpacity onPress={() => this.confirmPin()} style={[{backgroundColor:'#fff', height:35, width:100,borderRadius:30,
+                            justifyContent:'center',marginTop:25, alignItems:'center'}, styles.shadow]}>
+                                <Text style={{color:'#cc76fd'}}>Done</Text>
+                            </TouchableOpacity>
+                        </View> 
+                    }              
+                </ImageBackground>
             
             </Animated.View>
 
@@ -233,70 +286,110 @@ export default class Login extends Component<Props> {
                 }, styles.shadow]}>
             <ImageBackground 
                 source={{uri:'https://falgunit.com/tolet/img/1.png'}} 
-                style={{width:'100%', height:'100%', alignItems:'center'}}>                
-                <View style={{paddingTop:10, width:'80%',alignItems:'center',justifyContent:'center'}}>
-                    <Text style={styles.bigText}>Sign In</Text>
-                    <View style={{width:'100%'}}>
-                        <View style={styles.label}>
-                            <Text style={styles.labelText}>Mobile Number</Text>
-                            <Icon name="phone" size={16} color="rgba(255,255,255,0.5)" />
+                style={{width:'100%', height:'100%', alignItems:'center'}}>  
+                {(!this.state.showForget) &&           
+                    <View style={{paddingTop:10, width:'80%',alignItems:'center',justifyContent:'center'}}>
+                        <Text style={styles.bigText}>SIGN IN</Text>
+                        <View style={{width:'100%'}}>
+                            <View style={styles.label}>
+                                <Text style={styles.labelText}>Mobile Number</Text>
+                                <Icon name="phone" size={16} color="rgba(255,255,255,0.5)" />
+                            </View>
+                            <TextInput 
+                                style={styles.input} 
+                                onChangeText={(logMobile) => this.setState({logMobile})} 
+                                ref={ input => {
+                                    this.inputs['logMobile'] = input;
+                                }}
+                                onSubmitEditing={() => {
+                                    this.focusNextField('logPassword');
+                                }}
+                                returnKeyType='next'
+                                selectTextOnFocus={true}
+                                autoCapitalize="none"
+                                blurOnSubmit={false}
+                            />
                         </View>
-                        <TextInput 
-                            style={styles.input} 
-                            onChangeText={(logMobile) => this.setState({logMobile})} 
-                            ref={ input => {
-                                this.inputs['logMobile'] = input;
-                            }}
-                            onSubmitEditing={() => {
-                                this.focusNextField('logPassword');
-                            }}
-                            returnKeyType='next'
-                            selectTextOnFocus={true}
-                            autoCapitalize="none"
-                            blurOnSubmit={false}
-                        />
-                    </View>
-                    <View style={{width:'100%', paddingBottom:10}}>
-                        <View style={styles.label}>
-                            <Text style={styles.labelText}>Password</Text>
-                            <Icon name="lock" size={16} color="rgba(255,255,255,0.5)" />
+                        <View style={{width:'100%', paddingBottom:10}}>
+                            <View style={styles.label}>
+                                <Text style={styles.labelText}>Password</Text>
+                                <Icon name="lock" size={16} color="rgba(255,255,255,0.5)" />
+                            </View>
+                            <TextInput 
+                                style={styles.input} 
+                                onChangeText={(logPassword) => this.setState({logPassword})} 
+                                ref={ input => {
+                                    this.inputs['logPassword'] = input;
+                                }}
+                                onSubmitEditing={() => {
+                                    this.checkMode();
+                                }}
+                                secureTextEntry={true}
+                                returnKeyType='next'
+                                selectTextOnFocus={true}
+                                autoCapitalize="none"
+                                blurOnSubmit={false}
+                            />
                         </View>
-                        <TextInput 
-                            style={styles.input} 
-                            onChangeText={(logPassword) => this.setState({logPassword})} 
-                            ref={ input => {
-                                this.inputs['logPassword'] = input;
-                            }}
-                            onSubmitEditing={() => {
-                                this.checkMode();
-                            }}
-                            secureTextEntry={true}
-                            returnKeyType='next'
-                            selectTextOnFocus={true}
-                            autoCapitalize="none"
-                            blurOnSubmit={false}
-                        />
-                    </View>
-                    <TouchableOpacity onPress={() => this.checkMode()} style={[{backgroundColor:'#fff', height:35, width:100,borderRadius:30,
-                    justifyContent:'center',marginTop:15, alignItems:'center'}, styles.shadow]}>
-                        <Text style={{color:'#cc76fd'}}>Sign In</Text>
-                    </TouchableOpacity>
-                </View>                
+                        <View style={{width:'100%', paddingBottom:10}}>
+                            <TouchableOpacity onPress={() => this.setState({showForget:true})} style={[styles.label, {height:40,marginTop:0, justifyContent:'center', alignItems:'center'}]}>
+                                <Text style={styles.labelText}>Forget Password</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <TouchableOpacity onPress={() => this.checkMode()} style={[{backgroundColor:'#fff', height:35, width:100,borderRadius:30,
+                        justifyContent:'center',marginTop:15, alignItems:'center'}, styles.shadow]}>
+                            <Text style={{color:'#cc76fd'}}>Sign In</Text>
+                        </TouchableOpacity>
+                    </View>                
+                }
+                {(this.state.showForget) &&           
+                    <View style={{paddingTop:10, width:'80%',alignItems:'center',justifyContent:'center'}}>
+                        <Text style={styles.bigText}>RECOVER PASSWORD</Text>
+                        <View style={{width:'100%'}}>
+                            <View style={styles.label}>
+                                <Text style={styles.labelText}>Mobile Number</Text>
+                                <Icon name="phone" size={16} color="rgba(255,255,255,0.5)" />
+                            </View>
+                            <TextInput 
+                                style={styles.input} 
+                                onChangeText={(forgetMobile) => this.setState({forgetMobile})} 
+                                ref={ input => {
+                                    this.inputs['forgetMobile'] = input;
+                                }}
+                                onSubmitEditing={() => {
+                                    this.focusNextField('logPassword');
+                                }}
+                                returnKeyType='next'
+                                selectTextOnFocus={true}
+                                autoCapitalize="none"
+                                blurOnSubmit={false}
+                            />
+                        </View>
+                        <TouchableOpacity onPress={() => this.checkMode()} style={[{backgroundColor:'#fff', height:35, width:100,borderRadius:30,
+                        justifyContent:'center',marginTop:15, alignItems:'center'}, styles.shadow]}>
+                            <Text style={{color:'#cc76fd'}}>Done</Text>
+                        </TouchableOpacity>
+                    </View>                
+                }
             </ImageBackground>
             
             </Animated.View>
             
         </ImageBackground>
-            <TouchableOpacity onPress={() => this.showSignIn()} style={[styles.signBtn, styles.shadow, {width:this.state.mode === 'In' ? width*.25:width*.2}]}>
-                <Text style={{color:'#fff'}}>
-                    Sign In
-                </Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => this.showSignUp()} style={[styles.signBtn,styles.shadow ,{top:'43%', width:this.state.mode === 'Up' ? width*.25:width*.2}]}>
-                <Text style={{color:'#fff'}}>
-                    Sign Up
-                </Text>
-            </TouchableOpacity>
+            {(this.state.mode == 'Up')&&
+                <TouchableOpacity onPress={() => this.showSignIn()} style={[styles.signBtn, styles.shadow, {width:width*.25}]}>
+                    <Text style={{color:'#fff'}}>
+                        Sign In
+                    </Text>
+                </TouchableOpacity>
+            }
+            {(this.state.mode == 'In')&&
+                <TouchableOpacity onPress={() => this.showSignUp()} style={[styles.signBtn,styles.shadow ,{top:'43%', width:width*.25}]}>
+                    <Text style={{color:'#fff'}}>
+                        Sign Up
+                    </Text>
+                </TouchableOpacity>
+            }
         </ScrollView>
     );
   }
@@ -329,7 +422,7 @@ const styles = StyleSheet.create({
         fontWeight:'100',
         color:'rgba(255,255,255,0.5)',
         fontSize:34,
-        alignItems:'center'
+        textAlign:'center'
     },
     input:{
         height:40,

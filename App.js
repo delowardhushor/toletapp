@@ -20,7 +20,7 @@ export default class App extends Component<Props> {
   constructor(props){
     super(props);
     this.state = {
-      activeScreen:"Home",
+      activeScreen:"Myhouse",
       houses:[],
       user:[],
       myhouse:[],
@@ -31,11 +31,15 @@ export default class App extends Component<Props> {
     var user = await getLocal('user');
     if(user != null){
       this.setState({user:user});
-      this.getAllHouse(user);
+      this.getAllHouseWithMy(user);
     }else{
       this.getAllHouse();
     }
     this.animateNavActiveIndicator = new Animated.Value(0);
+  }
+  
+  componentDidMount(){
+    
   }
 
   updateUser = (user) => {
@@ -43,10 +47,14 @@ export default class App extends Component<Props> {
   }
 
   getAllHouseWithMy = (user) => {
-    post('/all', (response) =>{
+    post('/adds/withmyhouse',{
+      mobile:user.mobile,
+      token:user.token
+    }, (response) => {
       console.log(response)
-        if(response.data !== null){
-            this.setState({houses:response.data});
+        if(response.data.success){
+            this.setState({houses:response.data.Adds});
+            this.setState({Myhouse:response.data.Myhouse});
         }
     })
   }
@@ -54,8 +62,8 @@ export default class App extends Component<Props> {
   getAllHouse = () => {
     get('/adds', (response) =>{
       console.log(response)
-        if(response.data !== null){
-            this.setState({houses:response.data});
+        if(response.data.success){
+            this.setState({houses:response.data.Adds});
         }
     })
   }
@@ -63,69 +71,9 @@ export default class App extends Component<Props> {
   signout = () => {
     this.setState({myhouse:[]});
     this.setState({user:[]});
-    this.setState({activeScreen:'Home'});
+    this.changeActiveTab('Home', 0);
     resetLocal('user');
   }
-
-  chkClr(screen){
-    if(this.state.activeScreen === screen){
-      return "#4ebd65";
-    }else{
-      return "#000";
-    }
-  }
-
-  cngSrn(srn, srlPosition){
-    this.setState({activeScreen:srn});
-    this.navigationSrl.scrollTo({x: srlPosition, y: 0, animated: true})
-  }
-
-  returnTab = () => {
-      return [
-        {
-          key: 'Home',
-          icon: 'home',
-          label: "Houses",
-          barColor: 'transparent',
-          pressColor: 'rgba(0, 0,0, 0.16)'
-        },
-        {
-          key: 'Myhouse',
-          icon: 'map-signs',
-          label: "My house",
-          barColor: 'transparent',
-          pressColor: 'rgba(0, 0,0, 0.16)'
-        },
-        {
-          key: 'Loved',
-          icon: 'heart',
-          label: "Loved",
-          barColor: 'transparent',
-          pressColor: 'rgba(0, 0,0, 0.16)'
-        },
-        {
-          key: 'Settings',
-          icon: 'cog',
-          label: "Settings",
-          barColor: 'transparent',
-          pressColor: 'rgba(0, 0,0, 0.16)'
-        }
-      ];
-  }
-
-  renderIcon = icon => ({ isActive }) => (
-    <Icon size={20} color={isActive?"#4ebd65":"#000"} name={icon} />
-  )
- 
-  renderTab = ({ tab, isActive }) => (
-    <FullTab
-      isActive={isActive}
-      key={tab.key}
-      label={tab.label}
-      labelStyle={{color:isActive?"#4ebd65":"#000", fontSize:10}}
-      renderIcon={this.renderIcon(tab.icon)}
-    />
-  )
 
   changeActiveTab = (tab, position) =>{
     this.setState({activeScreen:tab});
@@ -160,17 +108,23 @@ export default class App extends Component<Props> {
               <Home houses={this.state.houses} />
           </View>
           <View style={styles.singleNav}>
-            <Myhouse updateUser={this.updateUser} user={this.state.user} houses={this.state.houses} />
+            {(this.state.activeScreen == 'Myhouse') &&
+              <Myhouse updateUser={this.updateUser} user={this.state.user} Myhouse={this.state.Myhouse} />
+            }
+            </View>
+          <View style={styles.singleNav}>
+            {(this.state.activeScreen == 'Loved') &&
+              <Loved />
+            }
           </View>
           <View style={styles.singleNav}>
-            <Loved />
-          </View>
-          <View style={styles.singleNav}>
-            <Settings />
+            {(this.state.activeScreen == 'Settings') &&
+              <Settings signout={this.signout} />
+            }
           </View>
         </ScrollView>
-        <View style={{height:5, width:width, position:'relative'}}>
-          <Animated.View style={{position:'absolute',left:this.animateNavActiveIndicator, width:width/4}}>
+        <View style={{height:7, width:width, position:'relative'}}>
+          <Animated.View style={{position:'absolute',top:2,left:this.animateNavActiveIndicator, width:width/4}}>
             <View style={{height:3,marginHorizontal:20, backgroundColor:'#000', borderRadius:5}}></View>
           </Animated.View>
         </View>

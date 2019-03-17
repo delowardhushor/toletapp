@@ -47,7 +47,13 @@ export default class Home extends Component<Props> {
                     data={this.props.houses}
                     initialNumToRender={2}
                     keyExtractor={(item, index) => index.toString()}
-                    renderItem={({item, index}) => <SingleRent key={index} houseData = {item} last = {this.state.houses.length == index+1 ? true : false}  />}
+                    renderItem={({item, index}) => 
+                        <SingleRent 
+                            key={index} 
+                            houseData = {item} 
+                            last = {this.props.houses.length == index+1 ? true : false} 
+                        />
+                    }
                 />
             </View>
         );
