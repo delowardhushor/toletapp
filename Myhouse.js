@@ -25,9 +25,7 @@ export default class Myhouse extends Component<Props> {
   }
 
   componentWillReceiveProps(){
-    if(this.props.user.length == 0 ){
-      this.changePage('Login');
-    }
+
   }
 
   setPendingUser = (mobile, pass) => {
@@ -39,7 +37,6 @@ export default class Myhouse extends Component<Props> {
     if(this.props.user.length == 0 ){
       this.changePage('Login');
     }
-    console.log("hello")
   }
 
   changePage = (value) =>{

@@ -70,6 +70,38 @@ export default class Login extends Component<Props> {
         });
       }
 
+    sendCngPassPin(){
+        post('/setpin', {
+            mobile:this.state.forgetMobile, 
+        }, (response) => {
+            console.log(response)
+            if(response.data.success){
+                ToastAndroid.show("Please Confirm Pin", 3000);
+                this.setState({showPin:true});
+            }else{
+                ToastAndroid.show(response.data.msg, 3000);
+            }
+        });
+    }
+
+    cngPass(){
+        post('/cngpass', {
+            mobile:this.state.forgetMobile, 
+            pin:this.state.forgetPin, 
+            password:this.state.forgetPass, 
+        }, (response) => {
+            console.log(response)
+            if(response.data.success){
+                ToastAndroid.show('Welcome', 1000);
+                setLocal('user', response.data.userdata);
+                this.props.updateUser(response.data.userdata);
+                this.props.changePage('myHouse');
+            }else{
+                ToastAndroid.show(response.data.msg, 3000);
+            }
+        });
+    }
+
     login(){
         post('/signin', {
             mobile:this.state.logMobile, 
@@ -145,7 +177,10 @@ export default class Login extends Component<Props> {
         <ImageBackground source={{uri:'https://falgunit.com/tolet/img/1.png'}} style={{width: width, height: height, position:'relative'}}>
             <View style={{position:'absolute', width:width*2,height:width*2,borderRadius:width,backgroundColor:'#fff', top:-width*1.5,left:-width}}>    
             </View>
-            <Image style={styles.logo} source={{uri:'https://falgunit.com/tolet/img/logo.png'}} />
+            <Image style={styles.logo} source={{uri:'https://falgunit.com/tolet/img/tolet.png'}} />
+            <View style={styles.logoTextWrapper}>
+                <Text style={styles.logoText}>TOLET</Text>
+            </View>
             <View style={{position:'absolute', width:width*2,height:width*2,borderRadius:width,backgroundColor:'#fff', bottom:-width*1.5,right:-width}}>
             </View>
             <Animated.View
@@ -342,7 +377,7 @@ export default class Login extends Component<Props> {
                         </TouchableOpacity>
                     </View>                
                 }
-                {(this.state.showForget) &&           
+                {(this.state.showForget && !this.state.showPin) &&           
                     <View style={{paddingTop:10, width:'80%',alignItems:'center',justifyContent:'center'}}>
                         <Text style={styles.bigText}>RECOVER PASSWORD</Text>
                         <View style={{width:'100%'}}>
@@ -357,7 +392,7 @@ export default class Login extends Component<Props> {
                                     this.inputs['forgetMobile'] = input;
                                 }}
                                 onSubmitEditing={() => {
-                                    this.focusNextField('logPassword');
+                                    this.sendCngPassPin();
                                 }}
                                 returnKeyType='next'
                                 selectTextOnFocus={true}
@@ -365,7 +400,77 @@ export default class Login extends Component<Props> {
                                 blurOnSubmit={false}
                             />
                         </View>
-                        <TouchableOpacity onPress={() => this.checkMode()} style={[{backgroundColor:'#fff', height:35, width:100,borderRadius:30,
+                        <TouchableOpacity onPress={() => this.sendCngPassPin()} style={[{backgroundColor:'#fff', height:35, width:100,borderRadius:30,
+                        justifyContent:'center',marginTop:15, alignItems:'center'}, styles.shadow]}>
+                            <Text style={{color:'#cc76fd'}}>Done</Text>
+                        </TouchableOpacity>
+                    </View>                
+                }
+
+                {(this.state.showForget && this.state.showPin) &&           
+                    <View style={{paddingTop:10, width:'80%',alignItems:'center',justifyContent:'center'}}>
+                        <Text style={styles.bigText}>CHANGE PASSWORD</Text>
+                        <View style={{width:'100%'}}>
+                            <View style={styles.label}>
+                                <Text style={styles.labelText}>Pin</Text>
+                                <Icon name="phone" size={16} color="rgba(255,255,255,0.5)" />
+                            </View>
+                            <TextInput 
+                                style={styles.input} 
+                                onChangeText={(forgetPin) => this.setState({forgetPin})} 
+                                ref={ input => {
+                                    this.inputs['forgetPin'] = input;
+                                }}
+                                onSubmitEditing={() => {
+                                    this.focusNextField('forgetPass');
+                                }}
+                                returnKeyType='next'
+                                selectTextOnFocus={true}
+                                autoCapitalize="none"
+                                blurOnSubmit={false}
+                            />
+                        </View>
+                        <View style={{width:'100%'}}>
+                            <View style={styles.label}>
+                                <Text style={styles.labelText}>New Password</Text>
+                                <Icon name="lock" size={16} color="rgba(255,255,255,0.5)" />
+                            </View>
+                            <TextInput 
+                                style={styles.input} 
+                                onChangeText={(forgetPass) => this.setState({forgetPass})} 
+                                ref={ input => {
+                                    this.inputs['forgetPass'] = input;
+                                }}
+                                onSubmitEditing={() => {
+                                    this.focusNextField('forgetConPass');
+                                }}
+                                returnKeyType='next'
+                                selectTextOnFocus={true}
+                                autoCapitalize="none"
+                                blurOnSubmit={false}
+                            />
+                        </View>
+                        <View style={{width:'100%'}}>
+                            <View style={styles.label}>
+                                <Text style={styles.labelText}>Confirm Password</Text>
+                                <Icon name="lock" size={16} color="rgba(255,255,255,0.5)" />
+                            </View>
+                            <TextInput 
+                                style={styles.input} 
+                                onChangeText={(forgetConPass) => this.setState({forgetConPass})} 
+                                ref={ input => {
+                                    this.inputs['forgetConPass'] = input;
+                                }}
+                                onSubmitEditing={() => {
+                                    this.cngPass();
+                                }}
+                                returnKeyType='done'
+                                selectTextOnFocus={true}
+                                autoCapitalize="none"
+                                blurOnSubmit={false}
+                            />
+                        </View>
+                        <TouchableOpacity onPress={() => this.cngPass()} style={[{backgroundColor:'#fff', height:35, width:100,borderRadius:30,
                         justifyContent:'center',marginTop:15, alignItems:'center'}, styles.shadow]}>
                             <Text style={{color:'#cc76fd'}}>Done</Text>
                         </TouchableOpacity>
@@ -421,7 +526,7 @@ const styles = StyleSheet.create({
     bigText:{
         fontWeight:'100',
         color:'rgba(255,255,255,0.5)',
-        fontSize:34,
+        fontSize:24,
         textAlign:'center'
     },
     input:{
@@ -452,7 +557,22 @@ const styles = StyleSheet.create({
         height:Dimensions.get('window').width*0.2,
         width:Dimensions.get('window').width*0.2,
         position:'absolute',
-        top:30,
+        top:10,
         left:10
+    },
+    logoTextWrapper:{
+        position:'absolute',
+        height:Dimensions.get('window').width*0.2,
+        width:Dimensions.get('window').width*0.2,
+        position:'absolute',
+        top:Dimensions.get('window').width*0.2,
+        alignItems:'center',
+        left:10,
+    },
+    logoText:{
+        color:'#a3176e',
+        fontWeight:'bold',
+        
+        textAlign:'center'
     }
 });
