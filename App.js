@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View,TouchableOpacity, KeyboardAvoidingView , TouchableNativeFeedback, Dimensions, ScrollView, Animated, Easing} from 'react-native';
+import {Platform, StyleSheet, Text, View,TouchableOpacity, KeyboardAvoidingView ,TouchableWithoutFeedback, Dimensions, ScrollView, Animated, Easing} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { createBottomTabNavigator } from 'react-navigation';
 import Home from './Home';
@@ -78,7 +78,7 @@ export default class App extends Component<Props> {
   changeActiveTab = (tab, position) =>{
     this.setState({activeScreen:tab});
     this.navScroll.scrollTo({x: position, y: 0, animated: true});
-    this.anim(this.animateNavActiveIndicator, (position/width)*(width*0.25), 450);
+    this.anim(this.animateNavActiveIndicator, (position/width)*(width*0.25), 200);
   }
 
   chkNavPos = (event) => {
@@ -95,7 +95,6 @@ export default class App extends Component<Props> {
 
 
   render() {
-    let {width, height} = Dimensions.get('window');
     return (
       <View  style={{ flex: 1 , backgroundColor:'#fff'}}>
         <ScrollView 
@@ -128,23 +127,31 @@ export default class App extends Component<Props> {
             <View style={{height:3,marginHorizontal:20, backgroundColor:'#000', borderRadius:5}}></View>
           </Animated.View>
         </View>
-        <View style={{flexDirection:'row',position:'relative', height:40, alignItems:'center', justifyContent:'space-around', backgroundColor:'#fff'}}>
-          <TouchableOpacity style={[styles.navBtn , this.state.activeScreen === "Home" ? styles.activeBtn : {}]} onPress={() => this.changeActiveTab("Home", 0)}>
-            <Icon name="home" size={20} color="#000" />
-            <Text style={styles.navBtnText}>Home</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.navBtn , this.state.activeScreen === "Myhouse" ? styles.activeBtn : {}]} onPress={() => this.changeActiveTab("Myhouse",width )}>
-            <Icon name="map-signs" size={20} color="#000" />
-            <Text style={styles.navBtnText}>My House</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.navBtn , this.state.activeScreen === "Loved" ? styles.activeBtn : {}]} onPress={() => this.changeActiveTab("Loved", width*2)}>
-            <Icon name="heart" size={20} color="#000" />
-            <Text style={styles.navBtnText}>Loved</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.navBtn , this.state.activeScreen === "Settings" ? styles.activeBtn : {}]} onPress={() => this.changeActiveTab("Settings", width*3)}>
-            <Icon name="cogs" size={20} color="#000" />
-            <Text style={styles.navBtnText}>Settings</Text>
-          </TouchableOpacity>
+        <View style={{flexDirection:'row',position:'relative', height:50, alignItems:'center', justifyContent:'space-around', backgroundColor:'#fff'}}>
+          <TouchableWithoutFeedback style={[styles.navBtn , this.state.activeScreen === "Home" ? styles.activeBtn : {}]} onPress={() => this.changeActiveTab("Home", 0)}>
+            <View style={{alignItems:'center', width:width/4}}>
+              <Icon name="home" size={20} color="#000" />
+              <Text style={styles.navBtnText}>Home</Text>
+            </View>
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback style={[styles.navBtn , this.state.activeScreen === "Myhouse" ? styles.activeBtn : {}]} onPress={() => this.changeActiveTab("Myhouse",width )}>
+            <View style={{alignItems:'center', width:width/4}}>
+              <Icon name="map-signs" size={20} color="#000" />
+              <Text style={styles.navBtnText}>My House</Text>
+            </View>
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback style={[styles.navBtn , this.state.activeScreen === "Loved" ? styles.activeBtn : {}]} onPress={() => this.changeActiveTab("Loved", width*2)}>
+            <View style={{alignItems:'center', width:width/4}}>
+              <Icon name="heart" size={20} color="#000" />
+              <Text style={styles.navBtnText}>Loved</Text>
+            </View>
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback style={[styles.navBtn , this.state.activeScreen === "Settings" ? styles.activeBtn : {}]} onPress={() => this.changeActiveTab("Settings", width*3)}>
+            <View style={{alignItems:'center', width:width/4}}>
+              <Icon name="cogs" size={20} color="#000" />
+              <Text style={styles.navBtnText}>Settings</Text>
+            </View>
+          </TouchableWithoutFeedback>
         </View>
       </View >
     );
@@ -153,8 +160,8 @@ export default class App extends Component<Props> {
 
 const styles = StyleSheet.create({
   navBtn:{
-    width:'20%',
-    height:40,
+    width:width/4,
+    height:50,
     alignItems:'center',
     justifyContent:'center',
   },
@@ -164,11 +171,11 @@ const styles = StyleSheet.create({
     color:'#000'
   },
   navScroll:{
-    width:Dimensions.get('window').width,
-    height:Dimensions.get('window').height-50,
+    width:width,
+    height:height-60,
   },
   singleNav:{
-    width:Dimensions.get('window').width,
+    width:width,
     height:'100%'
   },
   activeBtn:{
