@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet,WebView,TouchableOpacity, ToastAndroid, Modal,KeyboardAvoidingView, ImageBackground,AsyncStorage, ScrollView, Dimensions, Text,TextInput, View} from 'react-native';
+import {Platform, StyleSheet,WebView,TouchableOpacity,Image, ToastAndroid, Modal,KeyboardAvoidingView, ImageBackground,AsyncStorage, ScrollView, Dimensions, Text,TextInput, View} from 'react-native';
 import SingleRent from './resources/SingleRent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { theme } from './lib/theme';
@@ -9,6 +9,7 @@ import ConfirmCode from './ConfirmCode';
 import {setLocal, getLocal , post} from './lib/utilies';
 import AddHouse from './AddHouse';
 
+let {width,height} = Dimensions.get('window');
 
 
 type Props = {};
@@ -85,16 +86,26 @@ export default class Myhouse extends Component<Props> {
             <ConfirmCode confirmCode={this.confirmCode} changePage={this.changePage} />
           }
           {(this.state.page === 'myHouse') && 
-            <View>
-              <TouchableOpacity onPress={() => this.changePage('AddHouse')} style={styles.addBtnWrapper}>
-                <Text><Icon name='plus' size={12} color='#fff' /></Text>
+            <View style={{position:'relative', height:height-60}}>
+              <View style={styles.houseHeader}><Text style={styles.headerText}>Your Houses</Text>
+              </View>
+              <TouchableOpacity onPress={() => this.changePage('AddHouse')} style={[styles.addBtnWrapper,styles.shadow]}>
+                <Icon name="plus" color='#fff' size={22} />
               </TouchableOpacity>
-              <View style={styles.houseHeader}><Text style={styles.headerText}>Your Houses</Text></View>
             </View>
           }
-          {(this.state.page === 'AddHouse') &&
-            <AddHouse changePage={this.changePage} />
-          }
+          
+            <Modal
+            animationType="slide"
+            transparent={false}
+            visible={this.state.page === 'AddHouse' ? true : false}
+            onRequestClose={() => {
+              Alert.alert('Modal has been closed.');
+            }}>
+            {(this.state.page === 'AddHouse') &&
+              <AddHouse changePage={this.changePage} />
+            }
+            </Modal>
         </KeyboardAvoidingView>
     );
   }
@@ -109,14 +120,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5FCFF',
   },
   addBtnWrapper:{
-    height:30,
-    width:30,
-    backgroundColor:theme().backClr,
-    borderRadius:15,
+    height:50,
+    width:50,
+    backgroundColor:'#a3176e',
+    borderRadius:25,
     alignItems:'center',
     justifyContent:'center',
     position:'absolute',
-    top:12,
+    bottom:50,
     right:'5%',
   },
   houseHeader:{
@@ -144,5 +155,15 @@ const styles = StyleSheet.create({
   },
   fullWidth:{
     width:'100%',
-  }
+  },
+  shadow:{
+    shadowColor: "#000",
+    shadowOffset: {
+        width: 0,
+        height: 2,
+    },
+    shadowOpacity: 0.34,
+    shadowRadius: 2.27,
+    elevation: 15,
+  },
 });
