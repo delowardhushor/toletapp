@@ -47,7 +47,7 @@ export default class App extends Component<Props> {
   }
 
   getAllHouseWithMy = (user) => {
-    post('/adds/withmyhouse',{
+    post('/public/api/adds/withmyhouse',{
       mobile:user.mobile,
       token:user.token
     }, (response) => {
@@ -60,7 +60,7 @@ export default class App extends Component<Props> {
   }
 
   getAllHouse = () => {
-    get('/adds', (response) =>{
+    get('/public/api/adds', (response) =>{
       console.log(response)
         if(response.data.success){
             this.setState({houses:response.data.Adds});
@@ -95,6 +95,7 @@ export default class App extends Component<Props> {
 
 
   render() {
+    let {activeScreen} = this.state;
     return (
       <View  style={{ flex: 1 , backgroundColor:'#fff'}}>
         <ScrollView 
@@ -107,49 +108,49 @@ export default class App extends Component<Props> {
               <Home houses={this.state.houses} />
           </View>
           <View style={styles.singleNav}>
-            {(this.state.activeScreen == 'Myhouse') &&
+            {(activeScreen == 'Myhouse') &&
               <Myhouse updateUser={this.updateUser} user={this.state.user} Myhouse={this.state.Myhouse} />
             }
             </View>
           <View style={styles.singleNav}>
-            {(this.state.activeScreen == 'Loved') &&
+            {(activeScreen == 'Loved') &&
               <Loved />
             }
           </View>
           <View style={styles.singleNav}>
-            {(this.state.activeScreen == 'Settings') &&
+            {(activeScreen == 'Settings') &&
               <Settings signout={this.signout} />
             }
           </View>
         </ScrollView>
-        <View style={{height:7, width:width, position:'relative'}}>
+        {/* <View style={{height:7, width:width, position:'relative'}}>
           <Animated.View style={{position:'absolute',top:2,left:this.animateNavActiveIndicator, width:width/4}}>
             <View style={{height:3,marginHorizontal:20, backgroundColor:'#000', borderRadius:5}}></View>
           </Animated.View>
-        </View>
+        </View> */}
         <View style={{flexDirection:'row',position:'relative', height:50, alignItems:'center', justifyContent:'space-around', backgroundColor:'#fff'}}>
-          <TouchableWithoutFeedback style={[styles.navBtn , this.state.activeScreen === "Home" ? styles.activeBtn : {}]} onPress={() => this.changeActiveTab("Home", 0)}>
+          <TouchableWithoutFeedback style={[styles.navBtn , activeScreen === "Home" ? styles.activeBtn : {}]} onPress={() => this.changeActiveTab("Home", 0)}>
             <View style={{alignItems:'center', width:width/4}}>
-              <Icon name="home" size={20} color="#000" />
-              <Text style={styles.navBtnText}>Home</Text>
+              <Icon name="home" size={20} color={activeScreen === 'Home' ? "#a3176e" : "#000"} />
+              <Text style={[styles.navBtnText, {color:activeScreen === 'Home' ? "#a3176e" : "#000"}]}>Home</Text>
             </View>
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback style={[styles.navBtn , this.state.activeScreen === "Myhouse" ? styles.activeBtn : {}]} onPress={() => this.changeActiveTab("Myhouse",width )}>
+          <TouchableWithoutFeedback style={[styles.navBtn , activeScreen === "Myhouse" ? styles.activeBtn : {}]} onPress={() => this.changeActiveTab("Myhouse",width )}>
             <View style={{alignItems:'center', width:width/4}}>
-              <Icon name="map-signs" size={20} color="#000" />
-              <Text style={styles.navBtnText}>My House</Text>
+              <Icon name="map-signs" size={20} color={activeScreen === 'Myhouse' ? "#a3176e" : "#000"} />
+              <Text style={[styles.navBtnText, {color:activeScreen === 'Myhouse' ? "#a3176e" : "#000"}]}>My House</Text>
             </View>
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback style={[styles.navBtn , this.state.activeScreen === "Loved" ? styles.activeBtn : {}]} onPress={() => this.changeActiveTab("Loved", width*2)}>
+          <TouchableWithoutFeedback style={[styles.navBtn , activeScreen === "Loved" ? styles.activeBtn : {}]} onPress={() => this.changeActiveTab("Loved", width*2)}>
             <View style={{alignItems:'center', width:width/4}}>
-              <Icon name="heart" size={20} color="#000" />
-              <Text style={styles.navBtnText}>Loved</Text>
+              <Icon name="heart" size={20} color={activeScreen === 'Loved' ? "#a3176e" : "#000"} />
+              <Text style={[styles.navBtnText, {color:activeScreen === 'Loved' ? "#a3176e" : "#000"}]}>Loved</Text>
             </View>
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback style={[styles.navBtn , this.state.activeScreen === "Settings" ? styles.activeBtn : {}]} onPress={() => this.changeActiveTab("Settings", width*3)}>
+          <TouchableWithoutFeedback style={[styles.navBtn , activeScreen === "Settings" ? styles.activeBtn : {}]} onPress={() => this.changeActiveTab("Settings", width*3)}>
             <View style={{alignItems:'center', width:width/4}}>
-              <Icon name="cogs" size={20} color="#000" />
-              <Text style={styles.navBtnText}>Settings</Text>
+              <Icon name="cogs" size={20} color={activeScreen === 'Settings' ? "#a3176e" : "#000"} />
+              <Text style={[styles.navBtnText, {color:activeScreen === 'Settings' ? "#a3176e" : "#000"}]}>Settings</Text>
             </View>
           </TouchableWithoutFeedback>
         </View>
@@ -172,7 +173,7 @@ const styles = StyleSheet.create({
   },
   navScroll:{
     width:width,
-    height:height-60,
+    height:height-50,
   },
   singleNav:{
     width:width,

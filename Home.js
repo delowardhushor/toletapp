@@ -45,6 +45,7 @@ export default class Home extends Component<Props> {
                 <FlatList style={{height:Dimensions.get('window').height-100}}
                     extraData={this.state.watchChange}
                     data={this.props.houses}
+                    showsVerticalScrollIndicator={false}
                     initialNumToRender={2}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({item, index}) => 

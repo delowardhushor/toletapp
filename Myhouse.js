@@ -103,7 +103,7 @@ export default class Myhouse extends Component<Props> {
               Alert.alert('Modal has been closed.');
             }}>
             {(this.state.page === 'AddHouse') &&
-              <AddHouse changePage={this.changePage} />
+              <AddHouse changePage={this.changePage} user={this.props.user} />
             }
             </Modal>
         </KeyboardAvoidingView>

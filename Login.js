@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet,WebView,Animated,Image, Easing,Modal, ImageBackground,Dimensions,Keyboard, TouchableOpacity,Button, ToastAndroid, ScrollView, Text,TextInput, View} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Loading from './resources/Loading';
 import SingleRent from './resources/SingleRent';
 import { theme } from './lib/theme';
-import {post, setLocal, getLocal } from './lib/utilies';
+import {post, setLocal, getLocal, baseurl } from './lib/utilies';
 
 
 type Props = {};
@@ -15,7 +16,9 @@ export default class Login extends Component<Props> {
             mode : 'In',
             showPin : false,
             showForget : false,
-            scrollEnable : false
+            scrollEnable : false,
+
+            Loading:false
         };
         this.focusNextField = this.focusNextField.bind(this);
         this.inputs = {};
@@ -38,7 +41,7 @@ export default class Login extends Component<Props> {
     }
 
     signUp(){
-        post('/signup', {
+        post('/public/api/signup', {
             name:this.state.name, 
             mobile:this.state.mobile, 
             password:this.state.password
@@ -54,7 +57,7 @@ export default class Login extends Component<Props> {
     }
 
     confirmPin = (pin) => {
-        post('/verify', {
+        post('/public/api/verify', {
             mobile:this.state.mobile, 
             password:this.state.password,
             pin:this.state.pin,
@@ -71,7 +74,7 @@ export default class Login extends Component<Props> {
       }
 
     sendCngPassPin(){
-        post('/setpin', {
+        post('/public/api/setpin', {
             mobile:this.state.forgetMobile, 
         }, (response) => {
             console.log(response)
@@ -85,7 +88,7 @@ export default class Login extends Component<Props> {
     }
 
     cngPass(){
-        post('/cngpass', {
+        post('/public/api/cngpass', {
             mobile:this.state.forgetMobile, 
             pin:this.state.forgetPin, 
             password:this.state.forgetPass, 
@@ -103,7 +106,7 @@ export default class Login extends Component<Props> {
     }
 
     login(){
-        post('/signin', {
+        post('/public/api/signin', {
             mobile:this.state.logMobile, 
             password:this.state.logPassword
         }, (response) => {
@@ -174,10 +177,10 @@ export default class Login extends Component<Props> {
         showsVerticalScrollIndicator={false}
           ref={(c) => { this.Scroll = c }}
           scrollEnabled={this.state.scrollEnable}>
-        <ImageBackground source={{uri:'https://falgunit.com/tolet/img/1.png'}} style={{width: width, height: height, position:'relative'}}>
+        <ImageBackground source={{uri:baseurl()+'/img/1.png'}} style={{width: width, height: height, position:'relative'}}>
             <View style={{position:'absolute', width:width*2,height:width*2,borderRadius:width,backgroundColor:'#fff', top:-width*1.5,left:-width}}>    
             </View>
-            <Image style={styles.logo} source={{uri:'https://falgunit.com/tolet/img/tolet.png'}} />
+            <Image style={styles.logo} source={{uri:baseurl()+'/img/tolet.png'}} />
             <View style={styles.logoTextWrapper}>
                 <Text style={styles.logoText}>TOLET</Text>
             </View>
@@ -320,7 +323,7 @@ export default class Login extends Component<Props> {
                     zIndex:1
                 }, styles.shadow]}>
             <ImageBackground 
-                source={{uri:'https://falgunit.com/tolet/img/1.png'}} 
+                source={{uri:baseurl()+'/img/1.png'}} 
                 style={{width:'100%', height:'100%', alignItems:'center'}}>  
                 {(!this.state.showForget) &&           
                     <View style={{paddingTop:10, width:'80%',alignItems:'center',justifyContent:'center'}}>
@@ -495,6 +498,7 @@ export default class Login extends Component<Props> {
                     </Text>
                 </TouchableOpacity>
             }
+            {(this.state.Loading) && <Loading />}
         </ScrollView>
     );
   }
