@@ -2,16 +2,17 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text,Image, View,TouchableOpacity, TouchableNativeFeedback} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { theme } from '../lib/theme';
+import { baseurl } from '../lib/utilies';
 
 type Props = {};
 export default class SingleRent extends Component<Props> {
   render() {
-      console.log(this.props.last)
+    console.log(this.props.last)
     return (
         <View style={[styles.singleHouse, {paddingBottom:this.props.last === true ? 100 : 0 }]}>
             <Image 
                 style={{height:200,width:"100%", }}
-                source={{uri: 'https://www.mcdonaldjoneshomes.com.au/sites/default/files/designs/feature_images/granny-flat-9-living-kitchen-alfresco-r.jpg'}}
+                source={{uri: baseurl()+'/img/'+JSON.parse(this.props.houseData.image)[0]}}
             />
             <View style={styles.rentType}>
                 <Text style={styles.rentTypeText}>FOR {this.props.houseData.type}</Text>

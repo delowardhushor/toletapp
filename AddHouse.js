@@ -11,7 +11,6 @@ import FloatingLabelInput from './resources/FloatingLabelInput';
 
 let {width,height} = Dimensions.get('window');
 
-
 type Props = {};
 export default class AddHouse extends Component<Props> {
 
@@ -21,7 +20,7 @@ export default class AddHouse extends Component<Props> {
         houseData: {
           date:'',
           area:'',
-          images:[],
+          image:[],
           type:'',
           cost:'',
           room:'',
@@ -46,8 +45,11 @@ export default class AddHouse extends Component<Props> {
   }
 
   focusNextField = (id, position) => {
-
     this.inputs[id].focusNextField();
+    this.scrolldetailsScroll(position);
+  }
+
+  scrolldetailsScroll = (position) => {
     this.detailsScroll.scrollTo({x: 0, y: position, animated: true});
   }
 
@@ -102,7 +104,7 @@ export default class AddHouse extends Component<Props> {
     .then((res) => {
       if(res.data.success){
         var houseData = this.state.houseData;
-        houseData.images.push(res.data.image);
+        houseData.image.push(res.data.image);
         this.setState({houseData:houseData, watchChange:!this.state.watchChange});
       }
     })
@@ -114,7 +116,7 @@ export default class AddHouse extends Component<Props> {
 
   removeImage(index){
     var houseData = JSON.parse(JSON.stringify(this.state.houseData));
-    houseData.images.splice(index, 1);
+    houseData.image.splice(index, 1);
     this.setState({houseData:houseData, watchChange:!this.state.watchChange});
   }
 
@@ -149,23 +151,28 @@ export default class AddHouse extends Component<Props> {
   }
 
   addHouse(){
-    let {type, area, images, location, address, details, cost, size, room, bath } = this.state.houseData;
-    post('/adds/store', {
-      users_id:2,
+    let {date, type, area, image, location, address, details, cost, size, room, bath } = this.state.houseData;
+    console.log(this.props.user)
+    post('/public/api/adds/store', {
+      mobile:this.props.user.mobile,
+      token:this.props.user.token,
+      valid_date:date,
       type:type,
       room:room,
       bath:bath,
-      image:JSON.stringify(images),
+      image:image.length > 0 ? JSON.stringify(image) : JSON.stringify(['default.png']),
       location:location,
       address:address,
       square:size,
       details:details,
       cost:cost,
-      area:area,
+      area:area
     }, (response) => {
+      console.log(response);
       if(response.data.success === true){
-          ToastAndroid.show('House Added', 1000);
-          this.props.changePage('myHouse');
+        this.props.updateUser(this.props.user);
+        ToastAndroid.show('House Added', 1000);
+        this.props.changePage('myHouse');
       }else{
           ToastAndroid.show(response.data.msg, 1000);
       }
@@ -173,26 +180,33 @@ export default class AddHouse extends Component<Props> {
   }
 
   chkNextable = () => {
-    if(this.state.currentSection === 'selectArea'){
-      if(this.state.houseData.area){
-        return {'yes':true,position:width*4,section:'addLocation'};
+    let {houseData, currentSection} = this.state;
+    if(currentSection === 'selectArea'){
+      if(houseData.area){
+        return {'yes':true,position:width,section:'addLocation'};
       }else{
         return {'yes':false,msg:'Please Select a Area'};
       }
-    }else if(this.state.currentSection === 'addLocation'){
-      if(this.state.houseData.location){
+    }else if(currentSection === 'addLocation'){
+      if(houseData.location){
         return {'yes':true,position:width*2,section:'selectType'};
       }else{
         return {'yes':false,msg:'Please Select Tolet Type'};
       }
-    }else if(this.state.currentSection === 'selectType'){
-      if(this.state.houseData.type){
+    }else if(currentSection === 'selectType'){
+      if(houseData.type){
         return {'yes':true,position:width*3,section:'addImage'};
       }else{
         return {'yes':false,msg:'Please Set Your'};
       }
-    }else if(this.state.currentSection === 'addImage'){
+    }else if(currentSection === 'addImage'){
         return {'yes':true,position:width*4,section:'addDetails'};
+    }else if(currentSection === 'addDetails'){
+      if(houseData.date && houseData.size && houseData.room && houseData.bath && houseData.cost && houseData.address){
+        return {'yes':true};
+      }else{
+        return {'yes':false,msg:'Fill Empty'};
+      }
     }else{
       return {'yes':false};
     }
@@ -200,7 +214,9 @@ export default class AddHouse extends Component<Props> {
 
   ForwardCurrentSection = () => {
     var nextable =  this.chkNextable();
-    if(nextable.yes){
+    if(this.state.currentSection === 'addDetails' && nextable.yes){
+      this.addHouse();
+    }else if(nextable.yes){
       this.changeAddHouseScroll(nextable.section, nextable.position);
     }else{
       ToastAndroid.show(nextable.msg, 2000);
@@ -313,20 +329,28 @@ export default class AddHouse extends Component<Props> {
           <View style={styles.singlenav}>
             <Text style={styles.p}>Select House Type</Text>
             <View style={{width:width}}>
-                <TouchableOpacity onPress={() => this.cngHouseData('type','Rent')} style={  [styles.selectItem,{ backgroundColor:this.state.houseData.type === 'Rent' ? '#a3176e':'#fff'}]}>
-                  <Text style={{fontSize:14,fontWeight:'600', color:this.state.houseData.type === 'Rent' ? '#fff':'#000'}}>Rent</Text>
+                <TouchableOpacity onPress={() => this.cngHouseData('type','Single-Room-Rent')} style={  [styles.selectItem,{ backgroundColor:this.state.houseData.type === 'Single-Room-Rent' ? '#a3176e':'#fff'}]}>
+                  <Text style={{fontSize:14,fontWeight:'600', color:this.state.houseData.type === 'Single-Room-Rent' ? '#fff':'#000'}}>Single Room Rent</Text>
                   <Icon name='check' size={14} color="#eee" />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => this.cngHouseData('type','Room Mate')} style={  [styles.selectItem,{ backgroundColor:this.state.houseData.type === 'Room Mate' ? '#a3176e':'#fff'}]}>
-                  <Text style={{fontSize:14,fontWeight:'600', color:this.state.houseData.type === 'Room Mate' ? '#fff':'#000'}}>Room Mate</Text>
+                <TouchableOpacity onPress={() => this.cngHouseData('type','Flat-Rent')} style={  [styles.selectItem,{ backgroundColor:this.state.houseData.type === 'Flat-Rent' ? '#a3176e':'#fff'}]}>
+                  <Text style={{fontSize:14,fontWeight:'600', color:this.state.houseData.type === 'Flat-Rent' ? '#fff':'#000'}}>Flat Rent</Text>
                   <Icon name='check' size={14} color="#eee" />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => this.cngHouseData('type','Office Space')} style={  [styles.selectItem,{ backgroundColor:this.state.houseData.type === 'Office Space' ? '#a3176e':'#fff'}]}>
-                  <Text style={{fontSize:14,fontWeight:'600', color:this.state.houseData.type === 'Office Space' ? '#fff':'#000'}}>Office Space</Text>
+                <TouchableOpacity onPress={() => this.cngHouseData('type','Sub-Late')} style={  [styles.selectItem,{ backgroundColor:this.state.houseData.type === 'Sub-Late' ? '#a3176e':'#fff'}]}>
+                  <Text style={{fontSize:14,fontWeight:'600', color:this.state.houseData.type === 'Sub-Late' ? '#fff':'#000'}}>Sub-Let</Text>
                   <Icon name='check' size={14} color="#eee" />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => this.cngHouseData('type','Sale')} style={  [styles.selectItem,{ backgroundColor:this.state.houseData.type === 'Sale' ? '#a3176e':'#fff'}]}>
-                  <Text style={{fontSize:14,fontWeight:'600', color:this.state.houseData.type === 'Sale' ? '#fff':'#000'}}>Sale</Text>
+                <TouchableOpacity onPress={() => this.cngHouseData('type','Room-Mate')} style={  [styles.selectItem,{ backgroundColor:this.state.houseData.type === 'Room-Mate' ? '#a3176e':'#fff'}]}>
+                  <Text style={{fontSize:14,fontWeight:'600', color:this.state.houseData.type === 'Room-Mate' ? '#fff':'#000'}}>Room Mate</Text>
+                  <Icon name='check' size={14} color="#eee" />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => this.cngHouseData('type','Office-Space')} style={  [styles.selectItem,{ backgroundColor:this.state.houseData.type === 'Office-Space' ? '#a3176e':'#fff'}]}>
+                  <Text style={{fontSize:14,fontWeight:'600', color:this.state.houseData.type === 'Office-Space' ? '#fff':'#000'}}>Office Space</Text>
+                  <Icon name='check' size={14} color="#eee" />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => this.cngHouseData('type','Flat-Sale')} style={  [styles.selectItem,{ backgroundColor:this.state.houseData.type === 'Flat-Sale' ? '#a3176e':'#fff'}]}>
+                  <Text style={{fontSize:14,fontWeight:'600', color:this.state.houseData.type === 'Flat-Sale' ? '#fff':'#000'}}>Flat Sale</Text>
                   <Icon name='check' size={14} color="#eee" />
                 </TouchableOpacity>
             </View>                        
@@ -340,7 +364,7 @@ export default class AddHouse extends Component<Props> {
              <FlatList
               extraData={this.state.watchChange}
               style={{width:width}}
-              data={this.state.houseData.images}
+              data={this.state.houseData.image}
               initialNumToRender={2}
               keyExtractor={(item, index) => index.toString()}
               renderItem={({item, index}) => 
@@ -366,7 +390,7 @@ export default class AddHouse extends Component<Props> {
                       date={this.state.houseData.date}
                       mode="date"
                       placeholder="select date"
-                      format="DD/MM/YY"
+                      format="YYYY/M/D"
                       confirmBtnText="Confirm"
                       cancelBtnText="Cancel"
                       onDateChange={(date) => this.cngHouseData('date', date)}
@@ -423,53 +447,55 @@ export default class AddHouse extends Component<Props> {
 
                 <FloatingLabelInput
                   selectTextOnFocus={true}
-                  returnKeyType='next'
+                  returnKeyType='done'
                   blurOnSubmit={false}
                   keyboardType='numeric'
-                  label={this.state.houseData.type === 'Sale' ? 'Selling price' : 'Rent per Month (৳)'}
+                  label={this.state.houseData.type === 'Flat-Sale' ? 'Selling price (৳)' : 'Rent per Month (৳)'}
                   value={this.state.houseData.cost}
                   onChangeText={(cost) => this.cngHouseData('cost', cost)}
                   ref={ input => {
                     this.inputs['cost'] = input;
                   }}
                   onSubmitEditing={() => {
-                      this.focusNextField('address', 244);
+                      this.inputs['address'].focus();
+                      this.scrolldetailsScroll(250);
                   }}
                 />
 
-                <FloatingLabelInput
-                  selectTextOnFocus={true}
-                  returnKeyType='next'
-                  blurOnSubmit={false}
-                  keyboardType='numeric'
-                  label='Full Address'
-                  multiline={true}
-                  value={this.state.houseData.address}
-                  onChangeText={(address) => this.cngHouseData('address', address)}
+                <Text style={[styles.p, {marginTop:20, marginBottom:0}]}>Full Address</Text>
+                <TextInput 
+                  multiline
+                  style = {{textAlignVertical: "top", borderBottomColor:'#ddd', borderBottomWidth:1}} 
+                  underlineColorAndroid='transparent' 
+                  onChangeText = {(address) => this.cngHouseData('address',address )} 
+                  blurOnSubmit={false} 
+                  autoCapitalize="none"
+                  returnKeyType={ "next" }
                   ref={ input => {
                     this.inputs['address'] = input;
                   }}
                   onSubmitEditing={() => {
-                      this.focusNextField('details', 290);
+                    this.inputs['details'].focus();
+                    this.scrolldetailsScroll(320);
                   }}
-                />
-                
-                <FloatingLabelInput
-                  selectTextOnFocus={true}
-                  returnKeyType='next'
-                  blurOnSubmit={false}
-                  keyboardType='numeric'
-                  label='Additional Details'
-                  multiline={true}
-                  value={this.state.houseData.details}
-                  onChangeText={(details) => this.cngHouseData('details', details)}
+	    			     />
+
+                <Text style={[styles.p, {marginTop:20, marginBottom:0}]}>Details</Text>
+                <TextInput 
+                  multiline
+                  style = {{textAlignVertical: "top", borderBottomColor:'#ddd', borderBottomWidth:1}} 
+                  underlineColorAndroid='transparent' 
+                  onChangeText = {(details) => this.cngHouseData('details',details )} 
+                  blurOnSubmit={false} 
+                  autoCapitalize="none"
+                  returnKeyType={ "done" }
                   ref={ input => {
                     this.inputs['details'] = input;
                   }}
                   onSubmitEditing={() => {
-                      alert("done")
+                    alert("done");
                   }}
-                />
+	    			     />
 
                 <View style={{height:300}}></View>
               </ScrollView>
@@ -482,7 +508,7 @@ export default class AddHouse extends Component<Props> {
             <Text style={[styles.navBtnText, {opacity:currentSection === 'selectArea' ? .2 : 1}]}><Icon name='chevron-left' color='#000' sixe={14}  /> BACK</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.navBtn, {alignItems:'flex-end'}]} onPress={() => this.ForwardCurrentSection()}>
-            <Text style={[styles.navBtnText, {opacity:nextable.yes ? 1 : .2}]}>{this.state.currentSection === 'addImage' && this.state.houseData.images.length === 0 ? 'SKIP' : 'NEXT'} <Icon name='chevron-right' color='#000' sixe={14} /></Text>
+            <Text style={[styles.navBtnText, {opacity:nextable.yes ? 1 : .2}]}>{this.state.currentSection === 'addImage' && this.state.houseData.image.length === 0 ? 'SKIP' : this.state.currentSection === 'addDetails' ? 'Publish' : 'Next'} <Icon name='chevron-right' color='#000' sixe={14} /></Text>
           </TouchableOpacity>
         </View>
         {(this.state.Loading) && <Loading />}

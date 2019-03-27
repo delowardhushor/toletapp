@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet,WebView,TouchableOpacity,Image, ToastAndroid, Modal,KeyboardAvoidingView, ImageBackground,AsyncStorage, ScrollView, Dimensions, Text,TextInput, View} from 'react-native';
+import {Platform, StyleSheet,WebView,TouchableOpacity, Image, ToastAndroid, Modal,KeyboardAvoidingView, ImageBackground,AsyncStorage, ScrollView, Dimensions, Text,TextInput, View} from 'react-native';
 import SingleRent from './resources/SingleRent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { theme } from './lib/theme';
@@ -42,6 +42,7 @@ export default class Myhouse extends Component<Props> {
 
   changePage = (value) =>{
     this.setState({page:value});
+    this.props.changeActiveTab('Myhouse', width);
   }
 
   confirmCode = (pin) => {
@@ -86,7 +87,7 @@ export default class Myhouse extends Component<Props> {
             <ConfirmCode confirmCode={this.confirmCode} changePage={this.changePage} />
           }
           {(this.state.page === 'myHouse') && 
-            <View style={{position:'relative', height:height-60}}>
+            <View style={{position:'relative', height:height-50}}>
               <View style={styles.houseHeader}><Text style={styles.headerText}>Your Houses</Text>
               </View>
               <TouchableOpacity onPress={() => this.changePage('AddHouse')} style={[styles.addBtnWrapper,styles.shadow]}>
@@ -100,10 +101,11 @@ export default class Myhouse extends Component<Props> {
             transparent={false}
             visible={this.state.page === 'AddHouse' ? true : false}
             onRequestClose={() => {
-              Alert.alert('Modal has been closed.');
+              this.setState({page:'myHouse'});
+              this.props.changeActiveTab('Myhouse', width);
             }}>
             {(this.state.page === 'AddHouse') &&
-              <AddHouse changePage={this.changePage} user={this.props.user} />
+              <AddHouse updateUser={this.props.updateUser} changePage={this.changePage} user={this.props.user} />
             }
             </Modal>
         </KeyboardAvoidingView>

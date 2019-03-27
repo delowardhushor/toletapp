@@ -44,6 +44,7 @@ export default class App extends Component<Props> {
 
   updateUser = (user) => {
     this.setState({user:user});
+    this.getAllHouseWithMy(user);
   }
 
   getAllHouseWithMy = (user) => {
@@ -61,7 +62,6 @@ export default class App extends Component<Props> {
 
   getAllHouse = () => {
     get('/public/api/adds', (response) =>{
-      console.log(response)
         if(response.data.success){
             this.setState({houses:response.data.Adds});
         }
@@ -109,7 +109,7 @@ export default class App extends Component<Props> {
           </View>
           <View style={styles.singleNav}>
             {(activeScreen == 'Myhouse') &&
-              <Myhouse updateUser={this.updateUser} user={this.state.user} Myhouse={this.state.Myhouse} />
+              <Myhouse changeActiveTab={this.changeActiveTab} updateUser={this.updateUser} user={this.state.user} Myhouse={this.state.Myhouse} />
             }
             </View>
           <View style={styles.singleNav}>
@@ -123,11 +123,6 @@ export default class App extends Component<Props> {
             }
           </View>
         </ScrollView>
-        {/* <View style={{height:7, width:width, position:'relative'}}>
-          <Animated.View style={{position:'absolute',top:2,left:this.animateNavActiveIndicator, width:width/4}}>
-            <View style={{height:3,marginHorizontal:20, backgroundColor:'#000', borderRadius:5}}></View>
-          </Animated.View>
-        </View> */}
         <View style={{flexDirection:'row',position:'relative', height:50, alignItems:'center', justifyContent:'space-around', backgroundColor:'#fff'}}>
           <TouchableWithoutFeedback style={[styles.navBtn , activeScreen === "Home" ? styles.activeBtn : {}]} onPress={() => this.changeActiveTab("Home", 0)}>
             <View style={{alignItems:'center', width:width/4}}>
