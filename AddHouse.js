@@ -508,7 +508,7 @@ export default class AddHouse extends Component<Props> {
             <Text style={[styles.navBtnText, {opacity:currentSection === 'selectArea' ? .2 : 1}]}><Icon name='chevron-left' color='#000' sixe={14}  /> BACK</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.navBtn, {alignItems:'flex-end'}]} onPress={() => this.ForwardCurrentSection()}>
-            <Text style={[styles.navBtnText, {opacity:nextable.yes ? 1 : .2}]}>{this.state.currentSection === 'addImage' && this.state.houseData.image.length === 0 ? 'SKIP' : this.state.currentSection === 'addDetails' ? 'Publish' : 'Next'} <Icon name='chevron-right' color='#000' sixe={14} /></Text>
+            <Text style={[styles.navBtnText, {opacity:nextable.yes ? 1 : .2}]}>{this.state.currentSection === 'addImage' && this.state.houseData.image.length === 0 ? 'SKIP' : this.state.currentSection === 'addDetails' ? 'Publish' : 'Next'} <Icon name={this.state.currentSection === 'addDetails' ? 'check' :'chevron-right'} color='#000' sixe={14} /></Text>
           </TouchableOpacity>
         </View>
         {(this.state.Loading) && <Loading />}
