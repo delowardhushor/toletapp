@@ -542,7 +542,8 @@ const styles = StyleSheet.create({
         fontSize:16,
         justifyContent:'center',
         padding:2,
-        paddingLeft:10
+        paddingLeft:20,
+        borderRadius:30
     },
     label:{
         alignSelf:'center',

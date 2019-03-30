@@ -24,11 +24,18 @@ export default class App extends Component<Props> {
       houses:[],
       user:[],
       myhouse:[],
+      settings:{
+        loved:[]
+      },
     };
   }
 
   async componentWillMount(){
     var user = await getLocal('user');
+    var settings = await getLocal('settings');
+    if(settings != null){
+      this.setState({settings:settings});
+    }
     if(user != null){
       this.setState({user:user});
       this.getAllHouseWithMy(user);
