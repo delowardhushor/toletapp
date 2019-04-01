@@ -49,6 +49,26 @@ export default class AddHouse extends Component<Props> {
     this.scrolldetailsScroll(position);
   }
 
+  componentWillMount(){
+    let {updateHouse} = this.props;
+    
+    if(updateHouse){
+      var houseData = JSON.parse(JSON.stringify(this.state.houseData));
+      houseData.date = updateHouse.date;
+      houseData.area = updateHouse.area;
+      houseData.image = JSON.parse(updateHouse.image);
+      houseData.type = updateHouse.type;
+      houseData.cost = updateHouse.cost;
+      houseData.room = updateHouse.room;
+      houseData.bath = updateHouse.bath;
+      houseData.size = updateHouse.square;
+      houseData.address = updateHouse.address;
+      houseData.details = updateHouse.details;
+      houseData.location = updateHouse.location
+      this.setState({houseData:houseData})
+    }
+  }
+
   scrolldetailsScroll = (position) => {
     this.detailsScroll.scrollTo({x: 0, y: position, animated: true});
   }
@@ -253,7 +273,7 @@ export default class AddHouse extends Component<Props> {
           <TouchableOpacity style={styles.backBtn} onPress={() => this.props.changePage('myHouse')}>
             <Icon name='chevron-left' color='#000' size={22} />
           </TouchableOpacity>
-          <Text style={{color:'#000', fontSize:16, fontWeight:'bold'}}>ADD YOUR HOUSE</Text>
+          <Text style={{color:'#000', fontSize:16, fontWeight:'bold'}}>{this.props.updateHouse ? "UPDATE" :"ADD"} YOUR HOUSE</Text>
         </View>
         <View style={styles.headerProgress}>
 

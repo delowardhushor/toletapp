@@ -3,7 +3,6 @@ import {Platform,Keyboard,Modal, ToastAndroid,Slider, CheckBox, ScrollView, Styl
 import { theme } from './lib/theme';
 import { baseurl, get, post } from './lib/utilies';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import SingleRent from './resources/SingleRent';
 import HouseDetails from './resources/HouseDetails';
 import Search from './resources/Search';
 import Area from './resources/area.json';

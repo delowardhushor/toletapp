@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet,WebView,TouchableOpacity, Image, ToastAndroid, Modal,KeyboardAvoidingView, ImageBackground,AsyncStorage, ScrollView, Dimensions, Text,TextInput, View} from 'react-native';
-import SingleRent from './resources/SingleRent';
+import {Platform, StyleSheet,WebView,TouchableWithoutFeedback,TouchableOpacity, Image, ToastAndroid, Modal,KeyboardAvoidingView, ImageBackground,AsyncStorage, ScrollView, Dimensions, Text,TextInput, View} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { theme } from './lib/theme';
 import Login from './Login';
@@ -8,6 +7,7 @@ import ForgetPass from './ForgetPass';
 import ConfirmCode from './ConfirmCode';
 import {setLocal, getLocal , post} from './lib/utilies';
 import AddHouse from './AddHouse';
+import HouseList from './resources/HouseList';
 
 let {width,height} = Dimensions.get('window');
 
@@ -22,11 +22,9 @@ export default class Myhouse extends Component<Props> {
           watchChange: true,
           pendingMobile: '',
           pendingPass: '',
+
+          activeHouse: null,
       };
-  }
-
-  componentWillReceiveProps(){
-
   }
 
   setPendingUser = (mobile, pass) => {
@@ -41,7 +39,7 @@ export default class Myhouse extends Component<Props> {
   }
 
   changePage = (value) =>{
-    this.setState({page:value});
+    this.setState({activeHouse: null, page:value});
     this.props.changeActiveTab('Myhouse', width);
   }
 
@@ -60,6 +58,10 @@ export default class Myhouse extends Component<Props> {
             ToastAndroid.show(response.data.msg, 3000);
         }
     });
+  }
+
+  openHouse = (house) => {
+    this.setState({page:'AddHouse', activeHouse:house});
   }
   
 
@@ -88,11 +90,15 @@ export default class Myhouse extends Component<Props> {
           }
           {(this.state.page === 'myHouse') && 
             <View style={{position:'relative', height:height-50}}>
-              <View style={styles.houseHeader}><Text style={styles.headerText}>Your Houses</Text>
+              <View style={styles.houseHeader}>
+                <Text style={styles.headerText}>Your Houses</Text>
               </View>
-              <TouchableOpacity onPress={() => this.changePage('AddHouse')} style={[styles.addBtnWrapper,styles.shadow]}>
-                <Icon name="plus" color='#fff' size={22} />
-              </TouchableOpacity>
+              <HouseList houses={this.props.Myhouse} openHouse={this.openHouse} />
+              <TouchableWithoutFeedback onPress={() => this.changePage('AddHouse')}>
+                <View  style={[styles.addBtnWrapper,styles.shadow]}>
+                  <Icon name="plus" color='#fff' size={22} />
+                </View>
+              </TouchableWithoutFeedback>
             </View>
           }
           
@@ -101,12 +107,10 @@ export default class Myhouse extends Component<Props> {
             transparent={false}
             visible={this.state.page === 'AddHouse' ? true : false}
             onRequestClose={() => {
-              this.setState({page:'myHouse'});
+              this.setState({activeHouse: null, page:'myHouse'});
               this.props.changeActiveTab('Myhouse', width);
             }}>
-            {(this.state.page === 'AddHouse') &&
-              <AddHouse updateUser={this.props.updateUser} changePage={this.changePage} user={this.props.user} />
-            }
+              <AddHouse updateHouse={this.state.activeHouse} updateUser={this.props.updateUser} changePage={this.changePage} user={this.props.user} />
             </Modal>
         </KeyboardAvoidingView>
     );
@@ -139,7 +143,10 @@ const styles = StyleSheet.create({
   },
   headerText:{
     color:theme().clr,
-    fontSize:16,
+    fontSize:30,
+    textAlign:'center',
+    fontWeight:'bold',
+    color:theme().clr
   },
   singleImage:{
     height:100, 
@@ -167,5 +174,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.34,
     shadowRadius: 2.27,
     elevation: 15,
+  },
+  head:{
+    fontSize:30,
+    textAlign:'center',
+    fontWeight:'bold',
+    color:theme().clr
   },
 });

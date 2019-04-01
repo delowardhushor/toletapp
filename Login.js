@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet,WebView,Animated,Image, Easing,Modal, ImageBackground,Dimensions,Keyboard, TouchableOpacity,Button, ToastAndroid, ScrollView, Text,TextInput, View} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Loading from './resources/Loading';
-import SingleRent from './resources/SingleRent';
 import { theme } from './lib/theme';
 import {post, setLocal, getLocal, baseurl } from './lib/utilies';
 

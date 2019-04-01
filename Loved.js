@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet,TouchableOpacity, WebView, ScrollView, Dimensions, Text,Linking, View} from 'react-native';
-import SingleRent from './resources/SingleRent';
+import HouseList from './resources/HouseList';
 
 type Props = {};
 export default class Loved extends Component<Props> {

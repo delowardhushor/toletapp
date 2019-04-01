@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet,WebView,ImageBackground,TouchableOpacity,Button, ToastAndroid, ScrollView, Dimensions, Text,TextInput, View} from 'react-native';
-import SingleRent from './resources/SingleRent';
 import { theme } from './lib/theme';
 import {post, setLocal, getLocal } from './lib/utilies';
 
